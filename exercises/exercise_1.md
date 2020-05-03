@@ -1,128 +1,214 @@
 ## Taller de construcción de redes de neuronas convolucionales 
 ### Machine Learning, Tensor Flow, Keras, Redes de neuronas
 
-## Ejercicio 1 - Instalación del entorno de trabajo 
+## Ejercicio 1 - Instalación de docker
 
-El objetivo de este ejercicio es desplegar el entorno de trabajo mediante la utilización de un servidor Jupyter Notebook. Para ello, vamos a construir un contenedor mediante Docker que contenga un servidor Jupyter Notebooks fin de poder desarrollar diferentes tipos de algoritmos de manera sencilla. Docker nos permite desplegar de forma sencilla contenedores utilizando imágenes previamente creadas, para aprender como reutilizar estas imágenes vamos a desplegar un servidor Jupyter Notebook. Existe diferentes maneras de construir nuestro contenedor Jupyter Notebook: 
+El objetivo de este ejercicio es instalar el entorno principal de trabajo para el desarrollo del taller. Docker es un proyecto de software que permite crear, construir y deplegar aplicaciones software de forma rápica y sencilla mediante virtualización basada en contenedores. Docker empaqueta el software en unidades estandarizadas llamadas contenedores que incluyen todo lo necesario para que el software se ejecute, incluyendo bibliotecas, herramientas de sistema, código y tiempo de ejecución. Con Docker, se puede implementar y ajustar la escala de aplicaciones rápidamente en cualquier entorno con la certeza de saber que su código se ejecutará. Ya que el contenedor es autocontenido desde el punto de vista del SSOO y las aplicaciones que se ejecutan dentro. 
 
-* Mediante la utilización el despligue de una imagen
-* Mediante la generación de un fichero de despliegue (docker-compose.yml)
+### Ciclo de vida de un contenedor
 
-**Paso 1: Descargando la imagen**
+El ciclo de vida de un contenedor es el conjunto de estados por los que puede pasar un contenedor a lo largo de su vida útil. 
 
-En primer lugar vamos a descarga la imagen que queremos instalar, para comprobar que imágenes tenemos disponibles podemos ir acceder al listado de imágenes disponibles en dockerhub. Para este ejercicio vamos a utilizar una imagen espécifica para Data Scientisth, que puede descargarse en el siguiente [enlace](https://hub.docker.com/r/jupyter/datascience-notebook/) . 
+<img src="./img/contenedores-2.svg" alt="La metáfora del contenedor" width="800"/>
 
+* Definición (DockerFile): Es el estado en el cual se están definiendo los elementos básicos del contenedor que se corresponden con la configuración del propio contenedor (SSOO), las diferentes libreras que serán instaladas, el código fuente que será desplegado y la forma en la que se ejecutará el código fuente. 
+* Imagen (Image): Es un imagen construida, es decir, todos los componentes han sido instalados y desplegados para su ejecución. 
+* Parada (Stopped): Es un contenedor en que encuentra en estado de reposo, es decir la imagen está congelada.  
+* Ejecución (Running): Es un contenedor en ejecución, es decir la imagen está en ejecución.   
+
+### Comando básicos de docker
+
+versión
 ```
-$ docker pull jupyter/datascience-notebook:latest
-```
-
-A continuación comprobaremos si la imagen se ha descargado correctamente y está disponible en nuestro repositorio local de imágenes, mediante el siguiente comando:
-
-```
-$ docker images 
-```
-
-Obteniendo la siguiente salida que nos indica que hemos descargado la imagen mongo en su versión (tag) 3.4.21-xenial hace 6 semanas. 
-
-```
-REPOSITORY                     TAG                 IMAGE ID            CREATED             SIZE
-jupyter/datascience-notebook   latest              9e64f3a158ed        2 weeks ago         4.91GB
+$ docker --version
 ```
 
-**Paso 2: Desplegandando la imagen**
-
-Una vez que hemos descargado la imagen podemos deplegarla para levantas nuestro servidor MongoDB, mediante el siguiente comando:
-
+descarga de imágenes 
 ```
-$ docker run --name=jupyter_server -p 8888:8888 -e JUPYTER_ENABLE_LAB=yes jupyter/datascience-notebook:latest -d
+$ docker pull nombre[:tag|@digest]
 ```
 
-**Paso 3: Desplegandando la imagen mediante compose**
-
-La otra alternativa a la creación de nuestro contenedor por linea de comando, es crear nuestro contenedor mediante un fichero de despliegue, para ello tenemos que crear nuestro fichero docker-compose.yml. Además incluiremos la configuración de red necesario para desplegar nuestro contenedor dentro de una futura red de contenedores. 
-
+Despliegue de un contenedor (básico)
 ```
-version: '3.4'
-services:
-  
-  jupyter:
-    restart: always
-    image: jupyter/datascience-notebook:latest
-    container_name: jupyter_server 
-    ports:
-      - "8888:8888"
-    volumes:
-      - ./notebooks:/home/jovyan/work
-    environment:
-      - JUPYTER_ENABLE_LAB=yes
-    networks:
-      fictizia_ml:
-        ipv4_address: 172.24.1.3
-
-networks:
-  fictizia_ml:
-    driver: bridge
-    driver_opts:
-      com.docker.network.enable_ipv6: "true"
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.24.1.0/24
+$ docker run --name=id_contenedor imagen
 ```
 
-Una vez construido nuestro fichero de despliegue podemos lanzar nuestro fichero de despliegue mediante el siguiente comando:
-
+Despliegue de un contenedor en segundo plano (básico)
 ```
-$ docker-compose -f docker_compose.yml up --build -d
-```
-
-**Paso 4: Accediendo a nuestro Jupyter Notebook server**
-
-Una vez que hemos desplegado correctamente nuestro servidor Jupyter Notebook podremos acceder a el mediante la siguiente url:
-
-```
-http://localhost:8888/
+$ docker run --name=id_contenedor -d imagen
 ```
 
-Pero al intentarlo nos solicitará un token de acceso. Para obtener el token de acceso es necesario acceder a los logs del contenedor que hemos desplegado mediante el siguiente comando:
-
-
+Listar/visualizar todas la imágenes finales
 ```
-$ docker logs jupyter_server
+$ docker images
 ```
 
-La salida de este comando nos mostará todo el log del contenedor donde podremos encontrar el token de acceso para acceder a nuestro servidor Jupyter Notebooks. 
-
+Listar/visualizar todas la imágenes (incluyenod las imágenes ocultas)
 ```
-Executing the command: jupyter lab
-[I 06:21:03.420 LabApp] Writing notebook server cookie secret to /home/jovyan/.local/share/jupyter/runtime/notebook_cookie_secret
-[I 06:21:04.777 LabApp] JupyterLab extension loaded from /opt/conda/lib/python3.7/site-packages/jupyterlab
-[I 06:21:04.778 LabApp] JupyterLab application directory is /opt/conda/share/jupyter/lab
-[I 06:21:05.881 LabApp] Serving notebooks from local directory: /home/jovyan
-[I 06:21:05.881 LabApp] The Jupyter Notebook is running at:
-[I 06:21:05.881 LabApp] http://5778cabb64d7:8888/?token=1e6d710c051275c055ab068fe46b7ef9f5b8a6eb24519bc0
-[I 06:21:05.881 LabApp]  or http://127.0.0.1:8888/?token=1e6d710c051275c055ab068fe46b7ef9f5b8a6eb24519bc0
-[I 06:21:05.881 LabApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
-[C 06:21:05.886 LabApp] 
-    
-    To access the notebook, open this file in a browser:
-        file:///home/jovyan/.local/share/jupyter/runtime/nbserver-6-open.html
-    Or copy and paste one of these URLs:
-        http://5778cabb64d7:8888/?token=1e6d710c051275c055ab068fe46b7ef9f5b8a6eb24519bc0
-     or http://127.0.0.1:8888/?token=1e6d710c051275c055ab068fe46b7ef9f5b8a6eb24519bc0
+$ docker images -a 
 ```
 
-**Paso 5: Creando nuestro notebook mediante python**
+Eliminar una imagen
+```
+$ docker images rm <id_imagen>
+```
 
-Una vez que hemos desplegado nuestro servidor Jupyter Notebook y hemos accedido a la consola de inicio. Podremos trabajar con el interfaz:
+Acceder al contenedor 
+```
+$ docker exec -it <id_contenedor> <programa>
+```
 
-<img src="../img/Jupyter_1.png" alt="Interfaz inicial Jupyter Notebook" width="800"/>
+Listar/visualizar todos los contenedores en ejecución
+```
+$ docker container ps
+```
 
-Como podemos observar en la imagen, el posible crear diferentes tipos de elementos (notebooks, scripts, etc). Para la realización de este ejercicio vamos a utilizar un notebook de tipo Python 3. De forma que una vez que pulsemos sobre el botón de python 3 crearemos un nuevo notebook, como se muestra en la siguiente imagen:
+Listar/visualizar todos los contenedores
+```
+$ docker container ps -a
+```
 
-<img src="../img/Jupyter_2.png" alt="Interfaz inicial Jupyter Notebook" width="800"/>
+Parar un contenedor
+```
+$ docker container stop <id_contenedor>
+```
 
-Este interfaz nos permite crear incluir fragmentos de código python y analizar su resultado una vez que ha sido ejecutado el fragmento de código, cada uno de estos fragmento es representado mediante un id entre corchetes, siendo su significado el siguiente:
+Arrancar de un contenedor (Debe encontrarse en el estado de parada (Stop))
+```
+$ docker container start <id_contenedor>
+```
 
-- [id]: Identifica un fragmento de código con el id. 
-- [*]: Identificado un fragmento de códico en ejecución. 
+Borrar de un contenedor (Debe encontrarse en el estado de parada (Stop))
+```
+$ docker container rm <id_contenedor>
+```
+
+Borrar de un contenedor
+```
+$ docker container rm -f <id_contenedor>
+```
+
+visualizar información del contenedor
+```
+$ docker inspect <id_contenedor>
+```
+
+Crear un volumen 
+```
+$ docker volume create --name <nombre_volumen>
+```
+
+eliminar un volumen 
+```
+$ docker volume rm <nombre_volumen>
+```
+
+### Instalación
+
+Para poder utilizar docker es necesario instalarlo previamente. En algunas ocasiones este se instala de forma conjunta con algunas aplicaciones por lo que es posible que se encuentre en tu sistema operativo. Para poder comprobar si docker se encuentra en tu sistema debes abrir un terminal o interfaz de comando y ejecutar el siguiente comando:
+
+```
+$ docker --version
+```
+
+y deberás obtener un resultado similar al siguiente (Este resultado se obtiene al ejecutar el comando sobre el sistema operativo Ubuntu 18.10): 
+
+```
+Docker version 19.03.5, build 633a0ea838
+```
+
+#### Instalación en Linux (Ubuntu)
+
+Para realizar la instalación sobre Ubuntu es necesario seguir los siguientes pasos:
+
+**Paso 1: Desintalación de versiones anteriores (opcional)**
+
+Se recomienda instalar la última versión estable de docker, por lo que si tu versión es inferior a la 19.03 o tu versión se corresponde con docker.io o docker-engine deberías eliminar la versión que tienes instalada e instalar una nueva versión. Para ello deberás utilizar el siguiente comando:
+
+```
+$ sudo apt-get remove docker docker-engine docker.io containerd runc
+```
+
+**Paso 2: Instalación de docker mediante apt-get**
+
+A continuación podemos realizar una instalación limpia de docker. Para ello vamos a utilizar la versión del repositorio de ubuntu, aunque si lo deseas puede utilizar el repositorio oficial de docker siguiente las instrucciones de su [página web](https://docs.docker.com/engine/install/ubuntu/). 
+
+
+1. Realizar la instalación de Docker mediante los siguiente comandos:
+
+```
+$ sudo apt-get update
+$ sudo apt-get install docker-ce docker-ce-cli containerd.io 
+```
+
+2. Si todo ha ido bien tras la instalación podrás utilizar el comando para obtener la versión de docker. Estamos listos para poder empezar con el taller. 
+
+```
+$ docker --version
+```
+
+#### Instalación en Mac
+
+Para realizar la instalación sobre Mac es necesario seguir los siguientes pasos:
+
+**Paso 1: Descarga de Docker Desktop**
+
+En primer lugar es necesario descarga la versión disponibles para Mac en el siguiente [enlace](https://hub.docker.com/editions/community/docker-ce-desktop-mac/).
+
+**Paso 2: Instalación de Docker Desktop**
+
+1. Hacer doble click sobre el archivo Docker.dmg para comenzar con el proceso de instalación. 
+
+2. A continuación tienes que mover el icono de docker al directorio de aplicaciones como se muestra en la siguiente figura.
+
+<img src="../img/docker-mac-1.png" alt="Instalación de docker en Mac 1" width="800"/>
+
+3. Hacer doble click en el icono de docker que está en tu directorio de aplicaciones para iniciar la ejecución, cómo se muestra en la siguiente figura. Para la ejecución de docker se te solicitará autorización mediante usuario y contraseña. Es necesario tener privilegios para la instalación de ciertos componentes. 
+
+<img src="../img/docker-mac-2.png" alt="Instalación de docker en Mac 2" width="800"/>
+
+4. Si la aplicación ha podido ejecutarse correctamente deberá aparecer el icono de docker en la barra superior derecha de tu escritorio. Este icono indica que Docker Desktop está ejecutandose y puedes utilizarlo en tu terminal. 
+
+<img src="../img/docker-mac-3.png" alt="Instalación de docker en Mac 3" width="160"/>
+
+5. Si todo ha ido bien tras la instalación podrás utilizar el comando para obtener la versión de docker. Estamos listos para poder empezar con el taller. 
+
+```
+$ docker --version
+```
+
+#### Instalación en Windows
+
+Para realizar la instalación sobre Mac es necesario seguir los siguientes pasos:
+
+**Paso 1: Descarga de Docker Desktop**
+
+En primer lugar es necesario descarga la versión disponibles para Mac en el siguiente [enlace](https://hub.docker.com/editions/community/docker-ce-desktop-windows/). Debes elegir la versión que se adapte a tu sistema operativo. 
+
+**Paso 2: Instalación de Docker Desktop**
+
+1. Hacer doble click sobre el archivo Installer.exe para comenzar con el proceso de instalación. 
+
+2. Seguir las instrucciones del instalador y aceptar las condiciones de uso. Para la instalación de docker se te solicitará autorización mediante usuario y contraseña. Es necesario tener privilegios para la instalación de ciertos componentes. 
+
+3. Pulsar el boton de finalizar (Finish) para completar la instalación. 
+
+4. Ejecutar Docker Desktop application como se muestra en la siguiente figura.
+
+<img src="../img/docker-win-1.png" alt="Instalación de docker en Windows 1" width="320"/>
+
+5. Si la aplicación ha podido ejecutarse correctamente deberá aparecer el icono de docker en la barra inferior derecha de tu escritorio. Este icono indica que Docker Desktop está ejecutandose y puedes utilizarlo en tu terminal. 
+
+<img src="../img/docker-win-2.png" alt="Instalación de docker en Windows 2" width="160"/>
+
+5. Si todo ha ido bien tras la instalación podrás utilizar el comando para obtener la versión de docker. Estamos listos para poder empezar con el taller. 
+
+```
+$ docker --version
+```
+
+### Recursos
+
+- [Página oficial | Docker](https://docs.docker.com/)
+- [Página oficial | Referencias](https://docs.docker.com/reference/)
+
