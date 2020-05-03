@@ -3,12 +3,11 @@
 Machine Learning, Tensor Flow, Keras, Redes de neuronas
 
 ## Redes de neuronas convolucionales
-[]=================
 
 Las redes convolucionales son un tipo de red neuronal que ha hecho muy popular en los últimos años debido a su capacidad para identificar información de la imágenes mediante la aplicación sucesiva de filtros tradicionalmente utilizados en la visión computador. Mediante un conjunto lo suficientemente grande ejemplos de entrenamiento son capaces de identificar aquellas características o "patrones" que permiten clasificar los objetos entre el conjunto de clases entre las que se reparten los ejemplos de aprendizaje.
 
 ## Índice de contenidos
-=================
+
 
 En este taller se describe el proceso de construcción de un red de neuronas de tipo convolucional para el identificación de diferentes de elementos en imágenes. Para el desarrollo del taller se propone 5 ejecicios:
 
@@ -19,7 +18,7 @@ En este taller se describe el proceso de construcción de un red de neuronas de 
 * Ejercicio 5 - [Construcción de una red de neuronas convolucional mediante Keras](./exercises/exercise_5.md)
 
 ## Requisitos mínimos
-=================
+
 
 A continuación se describen los requisitos mínimos para poder realizar este taller. 
 
@@ -29,7 +28,6 @@ A continuación se describen los requisitos mínimos para poder realizar este ta
 * Conexión a internet.
 
 ## Recursos de interés
-=================
 
 - [Python](https://www.python.org/) como lenguaje de programación para el desarrollo de nuestros ejercicios.
 - [Docker](https://docs.docker.com/) para construir el contenedor donde se desplegará nuestro servidor Jupyter.
