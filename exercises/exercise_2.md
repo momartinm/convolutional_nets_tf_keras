@@ -115,14 +115,7 @@ Executing the command: jupyter lab
      or http://127.0.0.1:8888/?token=1e6d710c051275c055ab068fe46b7ef9f5b8a6eb24519bc0
 ```
 
-**Paso 5: Eliminando el token de acceso (Opcional)**
-
-Por motivo de seguridad nuestro servidor Jupyter Notebooks nos va a solicitar el token de seguridad cada vez que queramos acceder al interfaz gráfico, pero es posible eliminar este paso con el objetivo de eliminar el sistema de acceso. Para ello debemos modificar el fichero de configuración .conf que se encuentra localizado. 
-
-```
-```
-
-**Paso 6: Creando nuestro notebook mediante python**
+**Paso 5: Creando nuestro notebook mediante python**
 
 Una vez que hemos desplegado nuestro servidor Jupyter Notebook y hemos accedido a la consola de inicio. Podremos trabajar con su interfaz gráfico:
 
