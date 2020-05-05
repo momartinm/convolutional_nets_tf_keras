@@ -1,0 +1,27 @@
+version: '3.4'
+services:
+  
+  jupyter:
+    restart: always
+    image: jupyter/datascience-notebook:latest
+    container_name: jupyter_server 
+    ports:
+      - "8888:8888"
+      - "6006:6006"
+    volumes:
+      - ./notebooks:/home/jovyan/work
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+    networks:
+      workshop_ml:
+        ipv4_address: 172.24.1.3
+
+networks:
+  workshop_ml:
+    driver: bridge
+    driver_opts:
+      com.docker.network.enable_ipv6: "true"
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.24.1.0/24

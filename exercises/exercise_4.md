@@ -315,5 +315,5 @@ Aprendizaje finalizado
 Exactitud test: 0.89510
 ```
 
-<img src="../img/regresion_conv_neurons_1.png" alt="Resultado de regresión lineal simple tras 100 iteraciones" width="800"/>
+<img src="../img/regresion_conv_neurons_1.png" alt="Resultado de aprendizaje tras 10 iteraciones" width="800"/>
 

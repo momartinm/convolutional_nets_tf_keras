@@ -34,7 +34,7 @@ jupyter/datascience-notebook   latest              9e64f3a158ed        2 weeks a
 Una vez que hemos descargado la imagen podemos deplegarla para levantas nuestro servidor MongoDB, mediante el siguiente comando:
 
 ```
-$ docker run --name=jupyter_server -p 8888:8888 -e JUPYTER_ENABLE_LAB=yes jupyter/datascience-notebook:latest -d
+$ docker run --name=jupyter_server -p 8888:8888 -p 6006:6006 -e JUPYTER_ENABLE_LAB=yes jupyter/datascience-notebook:latest -d
 ```
 
 **Paso 3: Desplegandando la imagen mediante compose**
@@ -43,6 +43,8 @@ La otra alternativa a la creación de nuestro contenedor por linea de comando, e
 
 * Volumen: Nos permite mapear ciertos directorios del contenedor en nuestra máquina host (tu ordenador) con el objetivo de conservar los archivos cuando dejemos de ejecutar el contenedor.
 * Network: Nos permite asociar a nuestro contenedor una dirección ip a un red que nos permitirá conectarlo con otros contenedores en el que caso de que queramos incluir otros servicios en el futuro. Es necesario definir la configuración de la red en fichero de despliegue. 
+
+__IMPORTANTE: Si estamos trabajando en un sistema operativo Windows debemos eliminar las dos líneas referente a los volúmenes debido a que en algunas versiones de windows este tipo de configuración no funciona correctamente.__
 
 ```
 version: '3.4'
@@ -54,6 +56,7 @@ services:
     container_name: jupyter_server 
     ports:
       - "8888:8888"
+      - "6006:6006"
     volumes:
       - ./notebooks:/home/jovyan/work
     environment:
@@ -79,7 +82,31 @@ Una vez construido nuestro fichero de despliegue podemos lanzar nuestro fichero 
 $ docker-compose -f docker_compose.yml up --build -d
 ```
 
-**Paso 4: Accediendo a nuestro Jupyter Notebook server**
+**Paso 5: Configurando los permisos de escritura**
+
+Tras la correcta ejecución del comando de despliegue, se habrá creado una nueva carpeta en el directorio sobre el cual lo hemos ejecutado denominada __notebooks__. Para comprobar la existencia de este directorio podemos utilizar el siguiente comando:
+
+```
+ls -la 
+```
+
+de forma que obtendremos el siguiente resultado:
+
+```
+total 12
+drwxrwxr-x 6 momartin momartin  4096 may  3 01:34 .
+drwxrwxr-x 4 momartin momartin  4096 mar 30 06:07 ..
+drwxr-xr-x 2 root     root      4096 may  3 01:34 notebooks
+```
+
+Como podemos observar, este directorio pertenece al usuario __root__ por lo que no se nos permitirá el almacenaminamiento de archivo dentro de el. Para modificar su propietario debemos utilizar el siguiente comando:
+
+
+```
+sudo chown momartin:momartin notebooks
+```
+
+**Paso 5: Accediendo a nuestro Jupyter Notebook server**
 
 Una vez que hemos desplegado correctamente nuestro servidor Jupyter Notebook podremos acceder a el mediante la siguiente url:
 
@@ -87,7 +114,7 @@ Una vez que hemos desplegado correctamente nuestro servidor Jupyter Notebook pod
 http://localhost:8888/
 ```
 
-Pero al intentarlo nos solicitará un token de acceso. Para obtener el token de acceso es necesario acceder a los logs del contenedor que hemos desplegado mediante el siguiente comando:
+Al acceder a la página web nos solicitará un token de acceso por motivos de seguridad. Para obtener el token de acceso es necesario acceder a los logs del contenedor que hemos desplegado mediante el siguiente comando:
 
 
 ```
@@ -115,7 +142,7 @@ Executing the command: jupyter lab
      or http://127.0.0.1:8888/?token=1e6d710c051275c055ab068fe46b7ef9f5b8a6eb24519bc0
 ```
 
-**Paso 5: Creando nuestro notebook mediante python**
+**Paso 6: Creando nuestro notebook mediante python**
 
 Una vez que hemos desplegado nuestro servidor Jupyter Notebook y hemos accedido a la consola de inicio. Podremos trabajar con su interfaz gráfico:
 

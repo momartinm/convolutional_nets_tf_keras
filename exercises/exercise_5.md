@@ -17,11 +17,15 @@ import os
 import os.path
 import requests 
 import math
+import datetime
+from time import time
 
+from keras.callbacks import TensorBoard
 from keras.models import Sequential
 from keras.layers import Dense, Conv2D, Flatten, MaxPooling2D
 from keras import optimizers
 from keras.utils import plot_model
+from keras.models import model_from_json
 ```
 
 Para el desarrollo de los diferentes ejercicios vamos a necesitar un conjunto de liberías que servirán para lo siguiente:
@@ -31,13 +35,15 @@ Para el desarrollo de los diferentes ejercicios vamos a necesitar un conjunto de
 * matplotlib: Nos ofrece funcionalidad para la visualización de datos. 
 * tensorflow: Nos ofrece funcionalidad para la construacción de procesos de entrenamiento. 
 * os: Nos ofrece funcionalidad para la manipulación de recursos del sistema operativo. 
-* os: Nos ofrece funcionalidad para la manipulación del sistema de ficheros del sistema operativo.
+* os.path: Nos ofrece funcionalidad para la manipulación del sistema de ficheros del sistema operativo.
 * requests: Nos ofrece funcionalidad para la descarga de archivos.
 * math: Nos ofrece funcionalidad para la realización de operaciones matemáticas complejos (no elementales).
+* time: Nos ofrece funcionalidad para la obtención de information referente al tiempo, para crear contadores o archivos de log. 
 * Keras.model: Nos ofrece diferente tipo de modelos, en este caso vamos a utilizar el modelo secuencial. 
 * Keras.layers: Nos ofrece diferentes tipo de capas para incluir en una red de neuronas.
 * optimizers from keras: Nos ofrece diferentes tipos de algoritmos de optimización, en nuestro caso utilizaremos el optimizador de Adams. 
 * Keras.utils: Nos ofrece diferentes funcionalidades para obtener información de la red construida. 
+* TensorBoard: Nos ofrece diferentes funcionalidades para cargar información en tensorborad y poder visualizar la evoluación de nuestros algoritmos. 
 
 
 **Paso 2: Definición de conjuntos de entrenamiento y test para el proceso de entrenamiento**
@@ -125,18 +131,23 @@ Además una vez compilada la red, utilizaremos la funcionalidad de keras para vi
 Una vez que se han definido todas las variables y funciones necesarias para el proceso de aprendizaje, podemos crear la función de aprendizaje. En este caso la función es muy sencilla, sólo hay que ajustar el formato de los conjuntos de entrenamiento y test y a continuación definir lo parámetros del entrenamiento. 
 
 ```
-def train(net, training_iters, learning_rate, batch_size = 128):
+logdir = "./logs/scalars/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+
+def train(net, training_iters, batch_size = 128):
     
     num_images = train_X.shape[0]
     x_shaped_array = train_X.reshape(len(train_X), 28, 28, 1)
     x_test_shaped_array = test_X.reshape(len(test_X), 28, 28, 1)
+
+    tensorboard_callback = TensorBoard(log_dir='logs/{}'.format(time()))
     
     net.fit(
       x_shaped_array,
       train_y,
       batch_size=batch_size,
-      epochs=2,
+      epochs=training_iters,
       validation_data=(x_test_shaped_array, test_y),
+      callbacks=[tensorboard_callback]
     )
     
     return net
