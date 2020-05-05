@@ -1,15 +1,30 @@
 ## Taller de construcción de redes de neuronas convolucionales 
 ### Machine Learning, Tensor Flow, Keras, Redes de neuronas
 
-## Ejercicio 3 - Descarga y análisis de la información 
+## Ejercicio 5 - Desarrollo de una red convolucional con Keras
 
-El objetivo de este ejercicio es construir nuestra red de neuronas convolucional mediante la utilización de tensorflow. 
+El objetivo de este ejercicio es construir nuestra red de neuronas convolucional mediante la utilización de Keras. 
 
-**Paso 1: Definición de paquetes a importar**
+**Paso 1: Instalación de paquetes y despligue de TensorFlow Board**
+
+En este primer paso hay que incluir nuevos paquetes a instalar con el objetivo de utilizar keras y TensorFlow Board. Para hay que incluir el siguiente código al comienzo del cuaderno. 
+
+```
+!pip install pandas scikit-learn numpy seaborn matplotlib numpy tensorflow==1.15 requests
+```
+
+Este comando nos permite cargar la extensión de TensorFlow Board. 
+
+```
+%load_ext tensorboard
+```
+
+**Paso 2: Definición de paquetes a importar**
 
 Para la realización de este ejercicio tenemos que importar nuevas librerías relacionadas con keras. Para ello es necesario modificar los paquetes importados que vamos a utilizar con respecto al ejercicio anterior. 
 
 ```
+import input_data
 import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
@@ -46,7 +61,7 @@ Para el desarrollo de los diferentes ejercicios vamos a necesitar un conjunto de
 * TensorBoard: Nos ofrece diferentes funcionalidades para cargar información en tensorborad y poder visualizar la evoluación de nuestros algoritmos. 
 
 
-**Paso 2: Definición de conjuntos de entrenamiento y test para el proceso de entrenamiento**
+**Paso 3: Definición de conjuntos de entrenamiento y test para el proceso de entrenamiento**
 
 El primer paso consiste en dividir la información entre los conjuntos de entrenamiento y test. Para ello crearemos 4 variables denominadas train y test e identificadas con __X__ para los ejemplos e __y__ para las clases o etiquetas (labels). 
 
@@ -66,7 +81,7 @@ Para la construcción de la red de neuronas vamos a definir una serie de variabl
 - n_input: Se corresponde con el número de neuronas de entrada.
 - n_output: Se corresponde con el número de neuronas de salida. Este valor se corresponderá con el número de labels o etiquetas. 
 
-**Paso 3: Inicialización del grafo (TensorFLow)**
+**Paso 4: Inicialización del grafo (TensorFLow)**
 
 TensorFlow es una framework que transforma el código fuente en grafo de operaciones que pueden ser ejecutadas de forma secuencial o paralela dependiendo de sus interacciones. Con el objetivo de eliminar cualquier tipo de información previo tenemos que resetear el grafo por defecto. 
 
@@ -74,7 +89,7 @@ TensorFlow es una framework que transforma el código fuente en grafo de operaci
 tf.reset_default_graph()
 ```
 
-**Paso 4: Inicialización de placeHolders**
+**Paso 5: Inicialización de placeHolders**
 
 Una vez que hemos definido la función de generación, podemos construir nuestra red de neuronas y definir las variables necesarias para el proceso de aprendiaje.  En este caso utilizaremos sólo los placeholders de tensorflow:
 
@@ -85,7 +100,7 @@ x = tf.placeholder("float", [None, n_input])
 y = tf.placeholder("float", [None, n_output])
 ```
 
-**Paso 5: Generación de la red**
+**Paso 6: Generación de la red**
 
 Una vez definadas la variables de entrada y salida con su formato (shape) podemos construir nuestra red de neuronas que estará compuesta de tres 4 capas: 
 
@@ -107,7 +122,7 @@ net.add(Dense(10, activation='softmax'))
 <img src="./img/neurons_1.png" alt="Estructura de la red de neuronas" width="800"/>
 
 
-**Paso 6: Definición de función de optimización**
+**Paso 7: Definición de función de optimización**
 
 A continuación tenemos que definir la función de obtimización que utilizaremos para minimizar el valor de función de coste. Para este ejecicio vamos a utilizar el algoritmo de [Adam](https://arxiv.org/abs/1412.6980https://arxiv.org/abs/1412.6980) con el fin de minimizar el coste del error mediante la función __optimizers.Adam__. 
 
@@ -115,7 +130,7 @@ A continuación tenemos que definir la función de obtimización que utilizaremo
 optimizer = optimizers.Adam(learning_rate=0.002, beta_1=0.9, beta_2=0.999)
 ```
 
-**Paso 7: Compilación de la red**
+**Paso 8: Compilación de la red**
 
 A continuación debemos compilar nuestra red utilizando un algoritmo de optimización, una función de loss, que en este caso utilizado la función de cruze de entropia categorizada y por último definimos la metrica que utilizaremos para el proceso de entrenamiento que será el __accuracy__. 
 
@@ -126,7 +141,7 @@ net.summary()
 
 Además una vez compilada la red, utilizaremos la funcionalidad de keras para visualizar su estructura. 
 
-**Paso 8: Definición de bucle de entrenamiento (Función)**
+**Paso 9: Definición de bucle de entrenamiento (Función)**
 
 Una vez que se han definido todas las variables y funciones necesarias para el proceso de aprendizaje, podemos crear la función de aprendizaje. En este caso la función es muy sencilla, sólo hay que ajustar el formato de los conjuntos de entrenamiento y test y a continuación definir lo parámetros del entrenamiento. 
 
@@ -153,7 +168,7 @@ def train(net, training_iters, batch_size = 128):
     return net
 ```
 
-**Paso 9: Visualización de resultados (Función)**
+**Paso 10: Visualización de resultados (Función)**
 
 Una vez realizado el proceso de entrenamiento vamos a utilizar la información recolectada por el proceso de entrenamiento con el fin de visualizar su evolución. Para ellos vamos a utilizar la funcionalidad de keras que nos permite generar una gráfica con los resultado del proceso, de forma similar a como lo hicimos anteriormente. 
 
@@ -169,13 +184,21 @@ def print_results(net):
     display(Image(filename=file))
 ```
 
-**Paso 10: Ejecución del proceso de entrenamiento**
+**Paso 11: Ejecución del proceso de entrenamiento**
 
 Una vez construidas nuestras funciones podemos ejecutar nuestro proceso de aprendizaje de la siguiente manera, ejecutando el proceso de aprendizaje durante 100 iteraciones con una tasa de aprendizaje del 0.001 y un tamaño de batch de 128 imágenes. 
 
 ```
-final_net = train(net, 10, 0.001, 128)
+final_net = train(net, 10, 128)
 print_results(final_net)
+```
+
+**Paso 12: Visualización de información con TensorFlowBoard**
+
+Es posible visualizar la información mediante TensorFlow Board con el objetivo de poder obtener toda la información sobre el proceso de aprendizaje. Para ello es necesario incluir el siguiente comando:
+
+```
+%tensorboard --logdir logs
 ```
 
 

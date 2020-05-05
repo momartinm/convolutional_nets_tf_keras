@@ -142,8 +142,13 @@ Pero al realizarlo se produce un error de ejecución, por lo que necesario carga
 - one_hot:  Realiza una transformación sobre las variables categorizadas a una codificación binaria. Es decir si tenemos n valores para una variables categorica se crearan n features binarias (0,1) de forma que sólo una de ellas tendrá el valor 1 correspondiendose con uno de los valores de la variable categorica. En este ejercicio, se utiliza para convertar la caraterística label (Clase de salida) en una coficiación binaria. 
 
 ```
-full_data = data = input_data.read_data_sets('dat',
+full_data = data = input_data.read_data_sets('data',
                                              one_hot=True)
+
+# Condificación one hot para un ejemplo de tipo Dress
+# 3 => [0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
+# El valor tres se convierte en una array de probabilidades donde la posición que se corresponde con la etiqueta (3) tiene una probabilidad de 1 y el resto tienen una probabilidad de cero.
+
 
 LABELS = {
  0: 'T-shirt/top',

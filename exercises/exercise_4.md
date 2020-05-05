@@ -1,7 +1,7 @@
 ## Taller de construcción de redes de neuronas convolucionales 
 ### Machine Learning, Tensor Flow, Keras, Redes de neuronas
 
-## Ejercicio 4 - Descarga y análisis de la información 
+## Ejercicio 4 - Desarrollo de una red convolucional con TensorFlow
 
 El objetivo de este ejercicio es construir nuestra red de neuronas convolucional mediante la utilización de tensorflow. 
 
@@ -87,7 +87,7 @@ Debido a que estamos realizando un proceso de clasificación debemos aplicar una
 Una vez que hemos definidos nuestras funciones auxiliares para la creación de la capas de nuestra red vamos construir una función para la generación de redes convolucionales genéricas. Para ellos crearemos la función __generate_network__ que tendrá 6 parámetros de entrada:
 
 - x: Se corresponde con la estructura de la imagen de entrada. 
-- weights: Se corresponde con la lista de pesos de todas la capas de la red. El orden de los pesos en la lista se corresponde con el orden de las capas de las red.  
+- weights: Se corresponde con la lista de pesos de todas la capas de la red. El orden de los pesos en la lista se corresponde con el orden de las capas de las red.
 - biases: Se corresponde con la lista de bias de todas la capas de la red. El orden de los bias en la lista se corresponde con el orden de las capas de las red y por tanto existe una correspondecia 1 a 1 con la lista de pesos. 
 - layers: Es un array que indica el tipo de las capas. Siendo su valor 1 para las capas de tipo convolucional y 2 para la capas de tipo Fully connected layer. Normalmente las red de neuronas convolucional sólo tiene una capa de fully connected al final pero es posible añadir más. 
 - drop_out: Es un valor boolean que indica si se quiere aplicar drop out para la red. Su valor por defecto es False. 
@@ -282,20 +282,23 @@ Una vez finalizado el proceso de entrenamiento, calcularemos los resultados fina
 
 Una vez realizado el proceso de entrenamiento vamos a utilizar la información recolectada por el proceso de entrenamiento con el fin de visualizar su evolución. Para ellos vamos a crear una función que denominaremos __print_results__ y utilizará 7 parámetros de entrada:
 
-- train_loss: Es el conjunto de los valores de coste (loss) del conjunto de entrenamiento en cada iteración. 
-- test_loss: Es el conjunto de los valores de coste (loss) del conjunto de test en cada iteración. 
+- train: Es el conjunto de los valores de coste (loss) del conjunto de entrenamiento en cada iteración. 
+- test: Es el conjunto de los valores de coste (loss) del conjunto de test en cada iteración. 
+- labels: Es un array bidimensional donde se incluye el nombre que se le dará a cada una de las curvas.
+- Legend: Es un string que almacena el nombre que se le dará a la gráfica. 
 
 ```
-def print_results(train_loss, test_loss):
+def print_results(train, test, labels, legend):
     
-    plt.plot(range(len(train_loss)), train_loss, 'b', label='Loss entrenamiento')
-    plt.plot(range(len(test_loss)), test_loss, 'r', label='Loss test')
+    plt.plot(range(len(train)), train, 'b', label=labels[0])
+    plt.plot(range(len(test)), test, 'r', label=labels[1])
     plt.title('Entrenamiento y test')
     plt.xlabel('Iteraciones',fontsize=16)
-    plt.ylabel('Loss',fontsize=16)
+    plt.ylabel(legend,fontsize=16)
     plt.legend()
     plt.figure()
     plt.show()
+
 ```
 
 **Paso 15: Ejecución del proceso de entrenamiento**
@@ -304,7 +307,8 @@ Una vez construidas nuestras funciones podemos ejecutar nuestro proceso de apren
 
 ```
 results = train(10, 0.001, 128)
-print_results(results[0], results[1])
+print_results(results[0], results[1], ['Loss entrenamiento', 'Loss test'], 'Loss')
+print_results(results[2], results[3], ['Acurracy entrenamiento', 'Acurracy test'], 'Acurracy')
 ```
 
 Siendo el resultado obtenido tras ejecutar el codígo el siguiente:
