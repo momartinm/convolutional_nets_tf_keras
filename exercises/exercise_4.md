@@ -71,7 +71,7 @@ Por último vamos a crear una función denominado __fully_connected__ que tendr�
 
 - x: Se corresponde con la capa anterior. En el caso de la primera capa, este valor se corresponde con la imagen de entrada. Es importante tener en cuenta que el shape de este valor debe ser igual que el shape de los pesos (weights) de la capa. 
 - W: Se corresponde con los pesos que se asignarán a la capa convolucional. 
-- b: Se corresponde con el bias que se aplicará sobre las capa convolucional.
+- b: Se corresponde con el bias que se aplicará sobre la capa convolucional.
 
 ```
 def fully_connected(x, w, b):
@@ -130,8 +130,8 @@ tf.reset_default_graph()
 
 Una vez que hemos definido la función de generación, podemos construir nuestra red de neuronas y definir las variables necesarias para el proceso de aprendiaje.  En este caso utilizaremos sólo dos variables de tensorflow:
 
-- placeholder: Son las variables de entrada (inputs) y salida (output) del algoritmo. Se generan mediante el método __tf.placeholder__. 
-- variable: Son las variables 
+- placeholder: - placeholder: Son las variables de entrada (inputs) y salida (output) del algoritmo. Se generan mediante el método __tf.placeholder__ y se utilizan para definir el grafo de tensorflow sin la necesidad de haberles asignado un valor inicial. 
+- variable: Son las variables que se modificarán durante el proceso de entrenamiento. Se generan mediante el método __tf.variable__ y se utilizan para definir variables dinámicas que tienen valor desde el inicio. En caso de que no se asigne valor, estas variables son inicializadas de manera aleatoria. 
 
 ```
 x = tf.placeholder("float", [None, n_input])

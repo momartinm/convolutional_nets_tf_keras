@@ -37,7 +37,7 @@ from time import time
 
 from keras.callbacks import TensorBoard
 from keras.models import Sequential
-from keras.layers import Dense, Conv2D, Flatten, MaxPooling2D
+from keras.layers import Dense, Conv2D, Flatten, MaxPooling2D, Dropout
 from keras import optimizers
 from keras.utils import plot_model
 from keras.models import model_from_json
@@ -93,7 +93,7 @@ tf.reset_default_graph()
 
 Una vez que hemos definido la función de generación, podemos construir nuestra red de neuronas y definir las variables necesarias para el proceso de aprendiaje.  En este caso utilizaremos sólo los placeholders de tensorflow:
 
-- placeholder: Son las variables de entrada (inputs) y salida (output) del algoritmo. Se generan mediante el método __tf.placeholder__. 
+- placeholder: Son las variables de entrada (inputs) y salida (output) del algoritmo. Se generan mediante el método __tf.placeholder__ y se utilizan para definir el grafo de tensorflow sin la necesidad de haberles asignado un valor inicial. 
 
 ```
 x = tf.placeholder("float", [None, n_input])
@@ -106,7 +106,7 @@ Una vez definadas la variables de entrada y salida con su formato (shape) podemo
 
 - Capa convolucional 1: Capa convolucional que aplica un filtro convolucional de 3 x 3, pooling de 2 x 2 con una función de activación ReLU con entrada de 28 neuronas y salida de 32 neuronas. 
 - Capa convolucional 2: Capa convolucional que aplica un filtro convolucional de 3 x 3, pooling de 2 x 2 con una función de activación ReLU con entrada de 32 neuronas y salida de 64 neuronas. 
-- Capa fully connected: Capa de tipo flaten con los parámetros por defecto. 
+- Capa fully connected: Capa de tipo flaten que aplana la información en un array. Suele utilizarse como capa inicial para aplanar las imágenes y transformarlas en un secuencia de píxeles.
 - Capa salida: Capa de salida densa con entrada de 512 neuronas y salida de 10 neuronas (labels). 
 
 ```
@@ -117,6 +117,7 @@ net.add(Conv2D(64, kernel_size=3, activation='relu'))
 net.add(MaxPooling2D(pool_size=2))
 net.add(Flatten())
 net.add(Dense(10, activation='softmax'))
+net.add(Dropout(0.2))
 ```
 
 <img src="../img/neurons_1.png" alt="Estructura de la red de neuronas" width="800"/>
@@ -139,14 +140,21 @@ net.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accu
 net.summary()
 ```
 
-Además una vez compilada la red, utilizaremos la funcionalidad de keras para visualizar su estructura. 
+Además una vez compilada la red, utilizaremos la función __summary__ que nos presenta un resumen de la estructura de la red que hemos creado (capas, orden de las capas, variables a entrenar, etc). 
 
 **Paso 9: Definición de bucle de entrenamiento (Función)**
 
-Una vez que se han definido todas las variables y funciones necesarias para el proceso de aprendizaje, podemos crear la función de aprendizaje. En este caso la función es muy sencilla, sólo hay que ajustar el formato de los conjuntos de entrenamiento y test y a continuación definir lo parámetros del entrenamiento. 
+Una vez que se han definido todas las variables y funciones necesarias para el proceso de aprendizaje, podemos crear la función de entrenamiento. En este caso la función es muy sencilla y formada por tres parámetros:
+
+- net: Que se corresponde con la red secuencial que hemos definido previamente.
+- training_iters: Que se corresponde con el número de iteraciones del proceso de entrenamiento.
+- batch_size: Que se corresponde con el tamaño de los conjuntos de entrenamiento que se utilizarán. 
+
+
+Esta función realiza una reestructuración de los datos de los conjuntos de entrenamiento y test para ajustarlos al formato y tamaño de las imágenes que hemos definido en caso de que existe alguna discrepancia y ejecuta el proceso de entrenamiento mediante la utilización del método __fit__ que ejecuta un proceso similar al que definimos en el ejercicio anterior. Además en este caso incluimos un __callback__ con el objetio de recolectar información que nos permita visualizar la evolución del proceso de entrenamiento mediante TensorBoard. 
 
 ```
-logdir = "./logs/scalars/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+logdir = "./logs_5/scalars/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
 def train(net, training_iters, batch_size = 128):
     
@@ -154,7 +162,7 @@ def train(net, training_iters, batch_size = 128):
     x_shaped_array = train_X.reshape(len(train_X), 28, 28, 1)
     x_test_shaped_array = test_X.reshape(len(test_X), 28, 28, 1)
 
-    tensorboard_callback = TensorBoard(log_dir='logs/{}'.format(time()))
+    tensorboard_callback = TensorBoard(log_dir='logs_5/{}'.format(time()))
     
     net.fit(
       x_shaped_array,
@@ -179,10 +187,10 @@ print_results(final_net)
 
 **Paso 12: Visualización de los resultados con TensorFlowBoard**
 
-Es posible visualizar la información mediante TensorFlow Board con el objetivo de poder obtener toda la información sobre el proceso de aprendizaje. Para ello es necesario incluir el siguiente comando y ejercutar el fragmento del cuarderno.
+Es posible visualizar la información mediante TensorFlow Board con el objetivo de poder obtener toda la información sobre el proceso de aprendizaje. Para ello es necesario incluir el siguiente comando y ejercutar el fragmento del cuarderno. TensorBoard utilizar los ficheros de logs que se han generado en el fichero que indiquemos como valor del parámetro __logdir__, que en este caso se corresponde con la carpeta logs_5 que hemos utilizado para almacenzar los logs generados en el proceso de entrenamiento del paso 10. 
 
 ```
-%tensorboard --logdir logs
+%tensorboard --logdir logs_5
 ```
 
 Tras la ejecución podremos ver a través del interfaz web, embevida en nuestro cuaderno, el resultado de nuestro proceso de aprendizaje, como se muestra en la siguiente imagen:
