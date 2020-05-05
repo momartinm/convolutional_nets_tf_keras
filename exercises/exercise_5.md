@@ -119,7 +119,7 @@ net.add(Flatten())
 net.add(Dense(10, activation='softmax'))
 ```
 
-<img src="./img/neurons_1.png" alt="Estructura de la red de neuronas" width="800"/>
+<img src="../img/neurons_1.png" alt="Estructura de la red de neuronas" width="800"/>
 
 
 **Paso 7: Definición de función de optimización**
@@ -187,7 +187,7 @@ Es posible visualizar la información mediante TensorFlow Board con el objetivo 
 
 Tras la ejecución podremos ver a través del interfaz web, embevida en nuestro cuaderno, el resultado de nuestro proceso de aprendizaje, como se muestra en la siguiente imagen:
 
-<img src="./img/tensorboard_1.png" alt="Resultado de un proceso de aprendizaje mediante TensorBoard" width="800"/>
+<img src="../img/tensorboard_1.png" alt="Resultado de un proceso de aprendizaje mediante TensorBoard" width="800"/>
 
 Si ejecutamos este comando antes del proceso de aprendizaje podremos ver en tiempo real la evolución del proceso, ya que TensorBoard tiene un sistema de refresco de 30 segundos. 
 
