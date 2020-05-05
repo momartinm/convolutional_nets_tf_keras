@@ -10,7 +10,9 @@ El objetivo de este ejercicio es descargar la información y analizarla con el o
 Los notebooks son entidades independientes que permiten la utilización de cualquier tipo de páquete python y para ellos nos ofrece la posibilidad de instalar paquete mediante la utilización de la sistema de instalación de paquetes pip. Para la instalación de los diferentes paquetes que utilizaremos para la realización de nuestro paquetes tenemos que ejecutar el siguiente comando:
 
 ```
-!pip install pandas scikit-learn numpy seaborn matplotlib numpy tensorflow==1.15 requests
+!sudo apt update
+!sudo apt -y install graphviz
+!pip install pandas scikit-learn numpy seaborn matplotlib numpy tensorflow==1.15 requests keras pydot
 ```
 
 Como podemos observar, es necesario incluir el caracter __!__ antes del comando de instalación. A continuación hay que seleccionar el fragmento y pulsar la tecla play para ejecutar el código contenido en el fragmento. Siendo el resultado de la ejecución de esta linea, el siguiente:

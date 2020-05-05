@@ -164,8 +164,9 @@ def print_results(net):
     
     file = 'model_plot.png'
     plot_model(net, to_file=file, show_shapes=True, show_layer_names=True)
-    plt.figure()
-    plt.imshow(file)
+
+    from IPython.display import Image, display
+    display(Image(filename=file))
 ```
 
 **Paso 10: Ejecución del proceso de entrenamiento**
@@ -174,7 +175,7 @@ Una vez construidas nuestras funciones podemos ejecutar nuestro proceso de apren
 
 ```
 final_net = train(net, 10, 0.001, 128)
-print(final_net)
+print_results(final_net)
 ```
 
 

@@ -34,7 +34,7 @@ jupyter/datascience-notebook   latest              9e64f3a158ed        2 weeks a
 Una vez que hemos descargado la imagen podemos deplegarla para levantas nuestro servidor MongoDB, mediante el siguiente comando:
 
 ```
-$ docker run --name=jupyter_server -p 8888:8888 -p 6006:6006 -e JUPYTER_ENABLE_LAB=yes jupyter/datascience-notebook:latest -d
+$ docker run --name=jupyter_server -p 8888:8888 -p 6006:6006 -e JUPYTER_ENABLE_LAB=yes -e GRANT_SUDO=yes --user root jupyter/datascience-notebook:latest -d
 ```
 
 **Paso 3: Desplegandando la imagen mediante compose**
@@ -59,8 +59,10 @@ services:
       - "6006:6006"
     volumes:
       - ./notebooks:/home/jovyan/work
+    user: root
     environment:
       - JUPYTER_ENABLE_LAB=yes
+      - GRANT_SUDO=yes
     networks:
       workshop_ml:
         ipv4_address: 172.24.1.3
