@@ -168,22 +168,6 @@ def train(net, training_iters, batch_size = 128):
     return net
 ```
 
-**Paso 10: Visualización de resultados (Función)**
-
-Una vez realizado el proceso de entrenamiento vamos a utilizar la información recolectada por el proceso de entrenamiento con el fin de visualizar su evolución. Para ellos vamos a utilizar la funcionalidad de keras que nos permite generar una gráfica con los resultado del proceso, de forma similar a como lo hicimos anteriormente. 
-
-```
-def print_results(net):
-    
-    print(net.summary())
-    
-    file = 'model_plot.png'
-    plot_model(net, to_file=file, show_shapes=True, show_layer_names=True)
-
-    from IPython.display import Image, display
-    display(Image(filename=file))
-```
-
 **Paso 11: Ejecución del proceso de entrenamiento**
 
 Una vez construidas nuestras funciones podemos ejecutar nuestro proceso de aprendizaje de la siguiente manera, ejecutando el proceso de aprendizaje durante 100 iteraciones con una tasa de aprendizaje del 0.001 y un tamaño de batch de 128 imágenes. 
@@ -193,12 +177,18 @@ final_net = train(net, 10, 128)
 print_results(final_net)
 ```
 
-**Paso 12: Visualización de información con TensorFlowBoard**
+**Paso 12: Visualización de los resultados con TensorFlowBoard**
 
-Es posible visualizar la información mediante TensorFlow Board con el objetivo de poder obtener toda la información sobre el proceso de aprendizaje. Para ello es necesario incluir el siguiente comando:
+Es posible visualizar la información mediante TensorFlow Board con el objetivo de poder obtener toda la información sobre el proceso de aprendizaje. Para ello es necesario incluir el siguiente comando y ejercutar el fragmento del cuarderno.
 
 ```
 %tensorboard --logdir logs
 ```
+
+Tras la ejecución podremos ver a través del interfaz web, embevida en nuestro cuaderno, el resultado de nuestro proceso de aprendizaje, como se muestra en la siguiente imagen:
+
+<img src="./img/tensorboard_1.png" alt="Resultado de un proceso de aprendizaje mediante TensorBoard" width="800"/>
+
+Si ejecutamos este comando antes del proceso de aprendizaje podremos ver en tiempo real la evolución del proceso, ya que TensorBoard tiene un sistema de refresco de 30 segundos. 
 
 
