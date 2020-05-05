@@ -134,14 +134,42 @@ $ sudo apt-get remove docker docker-engine docker.io containerd runc
 A continuación podemos realizar una instalación limpia de docker. Para ello vamos a utilizar la versión del repositorio de ubuntu, aunque si lo deseas puede utilizar el repositorio oficial de docker siguiente las instrucciones de su [página web](https://docs.docker.com/engine/install/ubuntu/). 
 
 
-1. Realizar la instalación de Docker mediante los siguiente comandos:
+1. Instalación de paquetes básicos para permitir la utilización de paquetes apt sobre HTTPS.
+
+```
+$ sudo apt-get update
+
+$ sudo apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common
+```
+
+2. Añadimos las claves GPG oficiales de docker
+
+```
+$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+```
+
+3. Añadimos el último repositorio stable. 
+
+```
+$ sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+```
+
+4. Realizar la instalación de Docker mediante los siguiente comandos:
 
 ```
 $ sudo apt-get update
 $ sudo apt-get install docker-ce docker-ce-cli containerd.io 
 ```
 
-2. Si todo ha ido bien tras la instalación podrás utilizar el comando para obtener la versión de docker. Estamos listos para poder empezar con el taller. 
+5. Si todo ha ido bien tras la instalación podrás utilizar el comando para obtener la versión de docker. Estamos listos para poder empezar con el taller. 
 
 ```
 $ docker --version
