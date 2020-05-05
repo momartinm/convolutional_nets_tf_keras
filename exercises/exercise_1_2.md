@@ -39,10 +39,11 @@ $ docker run --name=jupyter_server -p 8888:8888 -p 6006:6006 -e JUPYTER_ENABLE_L
 
 **Paso 3: Desplegandando la imagen mediante compose**
 
-La otra alternativa a la creación de nuestro contenedor por linea de comando, es crear nuestro contenedor mediante un fichero de despliegue, para ello tenemos que crear nuestro fichero docker-compose.yml. Este fichero de despligue nos permite definir la configuración de nuestro contener y incluir algunas opciones extra como:
+La otra alternativa a la creación de nuestro contenedor por linea de comando, es crear nuestro contenedor mediante un fichero de despliegue, para ello tenemos que crear nuestro fichero docker-compose.yml. Este fichero de despligue nos permite definir la configuración de nuestro contener y incluir algunas opciones como:
 
-* Volumen: Nos permite mapear ciertos directorios del contenedor en nuestra máquina host (tu ordenador) con el objetivo de conservar los archivos cuando dejemos de ejecutar el contenedor.
-* Network: Nos permite asociar a nuestro contenedor una dirección ip a un red que nos permitirá conectarlo con otros contenedores en el que caso de que queramos incluir otros servicios en el futuro. Es necesario definir la configuración de la red en fichero de despliegue. 
+* Ports: Nos permite indicar los puertos que vamos a abrir para acceder a los servicios del contenedor. En este caso vamos ha abrir dos puertos: (i) 8888 para acceder al servidor de jupyter notebook; y (ii) 6006 para acceder al interfaz gráfico de TensorBoard.
+* Volumes: Nos permite mapear ciertos directorios del contenedor en nuestra máquina host (tu ordenador) con el objetivo de conservar los archivos cuando dejemos de ejecutar el contenedor.
+* Networks: Nos permite asociar a nuestro contenedor una dirección ip a un red que nos permitirá conectarlo con otros contenedores en el que caso de que queramos incluir otros servicios en el futuro. Es necesario definir la configuración de la red en fichero de despliegue. 
 
 __IMPORTANTE: Si estamos trabajando en un sistema operativo Windows debemos eliminar las dos líneas referente a los volúmenes debido a que en algunas versiones de windows este tipo de configuración no funciona correctamente.__
 
