@@ -105,9 +105,9 @@ data_path = "data"
 try:
     os.mkdir(data_path)
 except OSError:
-    print ("El directorio %s ha sido creado correctamente" % (data_path))
+    print ("El directorio %s no ha podido ser creado correctamente" % (data_path))
 else:
-    print ("El directorio %s no hay podido ser creado" % (data_path))
+    print ("El directorio %s no sido creado correctamente" % (data_path))
 ```
 
 A continuación generamos el proceso de descarga de la información para cada una de las urls. 

@@ -110,7 +110,7 @@ Una vez definadas la variables de entrada y salida con su formato (shape) podemo
 - Capa salida: Capa de salida densa con entrada de 1600 neuronas y salida de 10 neuronas (labels). 
 
 ```
-net = Sequential()
+net = Sequential(name="KerasCNN")
 net.add(Conv2D(32, kernel_size=3, activation='relu', input_shape=(28,28,1)))
 net.add(MaxPooling2D(pool_size=2))
 net.add(Conv2D(64, kernel_size=3, activation='relu'))
@@ -154,7 +154,7 @@ Una vez que se han definido todas las variables y funciones necesarias para el p
 Esta función realiza una reestructuración de los datos de los conjuntos de entrenamiento y test para ajustarlos al formato y tamaño de las imágenes que hemos definido en caso de que existe alguna discrepancia y ejecuta el proceso de entrenamiento mediante la utilización del método __fit__ que ejecuta un proceso similar al que definimos en el ejercicio anterior. Además en este caso incluimos un __callback__ con el objetio de recolectar información que nos permita visualizar la evolución del proceso de entrenamiento mediante TensorBoard. 
 
 ```
-logdir = "./logs_5/scalars/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+logdir = "./logs/scalars/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
 def train(net, training_iters, batch_size = 128):
     
@@ -162,7 +162,7 @@ def train(net, training_iters, batch_size = 128):
     x_shaped_array = train_X.reshape(len(train_X), 28, 28, 1)
     x_test_shaped_array = test_X.reshape(len(test_X), 28, 28, 1)
 
-    tensorboard_callback = TensorBoard(log_dir='logs_5/{}'.format(time()))
+    tensorboard_callback = TensorBoard(log_dir='logs/{}'.format(time()))
     
     net.fit(
       x_shaped_array,
@@ -187,10 +187,10 @@ print_results(final_net)
 
 **Paso 12: Visualización de los resultados con TensorFlowBoard**
 
-Es posible visualizar la información mediante TensorFlow Board con el objetivo de poder obtener toda la información sobre el proceso de aprendizaje. Para ello es necesario incluir el siguiente comando y ejercutar el fragmento del cuarderno. TensorBoard utilizar los ficheros de logs que se han generado en el fichero que indiquemos como valor del parámetro __logdir__, que en este caso se corresponde con la carpeta logs_5 que hemos utilizado para almacenzar los logs generados en el proceso de entrenamiento del paso 10. 
+Es posible visualizar la información mediante TensorFlow Board con el objetivo de poder obtener toda la información sobre el proceso de aprendizaje. Para ello es necesario incluir el siguiente comando y ejercutar el fragmento del cuarderno. TensorBoard utilizar los ficheros de logs que se han generado en el fichero que indiquemos como valor del parámetro __logdir__, que en este caso se corresponde con la carpeta logs que hemos utilizado para almacenzar los logs generados en el proceso de entrenamiento del paso 10. 
 
 ```
-%tensorboard --logdir logs_5
+%tensorboard --logdir logs
 ```
 
 Tras la ejecución podremos ver a través del interfaz web, embevida en nuestro cuaderno, el resultado de nuestro proceso de aprendizaje, como se muestra en la siguiente imagen:

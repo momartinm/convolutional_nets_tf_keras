@@ -212,6 +212,9 @@ accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 Una vez que se han definido todas las variables y funciones necesarias para el proceso de aprendizaje, podemos construir el bucle en tensorflow. Para ello primero deberemos inicializar la variables mediante el método __tf.global_variables_initializer__. Este método inicializará todas las variables definidas previamente cuando se ejecute dentro de la sesion. A continuación será necesario crear una sesión en tensorflow para poder ejecutar todas nuestras funciones, siendo la primera la que inicializa la variables mediante la ejecución del método __session.run(init)__ de la sesión previamente creada. A continuación definiremos un conjunto de variables que almacenarán la información de cada una de nuestras iteraciones con el fin de poder visualizar la evolución del proceso. 
 
 ```
+
+log_dir = "./logs/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+
 def train(training_iters, learning_rate, batch_size = 128):
 
     init = tf.global_variables_initializer()
@@ -225,7 +228,7 @@ def train(training_iters, learning_rate, batch_size = 128):
         train_accuracy = []
         test_accuracy = []
 
-        summary_writer = tf.summary.FileWriter('./output', sess.graph)
+        writer = tf.summary.FileWriter(log_dir, sess.graph)
 
 ```
 
@@ -242,6 +245,12 @@ Una vez inicializadas las variables podemos comenzar el bucle de aprendizaje que
                 opt = sess.run(optimizer, feed_dict={x: batch_x, y: batch_y})
                 loss, acc = sess.run([cost, accuracy], feed_dict={x: batch_x,
                                                                   y: batch_y})
+	    
+            writer.add_summary(tf.Summary(value=[tf.Summary.Value(tag="loss", simple_value=loss)]), 
+                               epoch)
+            
+            writer.add_summary(tf.Summary(value=[tf.Summary.Value(tag="accuracy", simple_value=acc)]), 
+                                epoch)
 
 ```
 Estos valores se mostrarán cada 10 iteraciones con el fin de visualizar la evolución de nuestro proceso de entrenamiento. 
@@ -251,6 +260,8 @@ Estos valores se mostrarán cada 10 iteraciones con el fin de visualizar la evol
                 print("Iteración " + str(epoch+1) + ", Loss= " + \
                       "{:.6f}".format(loss) + ", Exactitud= " + \
                       "{:.5f}".format(acc))
+	
+		save_path = saver.save(sess, "./models/model" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + ".ckpt")
                 
             test_acc, valid_loss = sess.run([accuracy,cost], feed_dict={x: test_X,y : test_y})
             train_loss.append(loss)
@@ -262,7 +273,7 @@ Estos valores se mostrarán cada 10 iteraciones con el fin de visualizar la evol
 
 ```
 
-Una vez finalizado el proceso de entrenamiento, calcularemos los resultados finales con respeto . 
+Una vez finalizado el proceso de entrenamiento, calcularemos los resultados finales con respeto al conjunto de test. 
 
 ```
 
@@ -271,7 +282,7 @@ Una vez finalizado el proceso de entrenamiento, calcularemos los resultados fina
         test_loss.append(valid_loss)
         train_accuracy.append(acc)
         test_accuracy.append(test_acc)
-        print("Exactitud test:","{:.5f}".format(test_acc))
+        print("Accuracy test:","{:.5f}".format(test_acc))
 
         summary_writer.close()
         
@@ -306,6 +317,7 @@ def print_results(train, test, labels, legend):
 Una vez construidas nuestras funciones podemos ejecutar nuestro proceso de aprendizaje de la siguiente manera, ejecutando el proceso de aprendizaje durante 100 iteraciones con una tasa de aprendizaje del 0.001 y un tamaño de batch de 128 imágenes. 
 
 ```
+!rm -rf ./logs/
 results = train(10, 0.001, 128)
 print_results(results[0], results[1], ['Loss entrenamiento', 'Loss test'], 'Loss')
 print_results(results[2], results[3], ['Acurracy entrenamiento', 'Acurracy test'], 'Acurracy')
@@ -320,4 +332,14 @@ Exactitud test: 0.89510
 ```
 
 <img src="../img/regresion_conv_neurons_1.png" alt="Resultado de aprendizaje tras 10 iteraciones" width="800"/>
+
+
+**Paso 16: Ejecución del proceso de entrenamiento**
+
+Es posible visualizar la información mediante TensorFlow Board con el objetivo de poder obtener toda la información sobre el proceso de aprendizaje. Para ello es necesario incluir el siguiente comando y ejercutar el fragmento del cuarderno. TensorBoard utilizar los ficheros de logs que se han generado en el fichero que indiquemos como valor del parámetro __logdir__, que en este caso se corresponde con la carpeta logs que hemos utilizado para almacenzar los logs generados en el proceso de entrenamiento del paso 13. 
+
+```
+%tensorboard --logdir logs
+```
+
 
