@@ -1,7 +1,7 @@
 ## Taller de construcción de redes de neuronas convolucionales 
 ### Machine Learning, Tensor Flow, Keras, Redes de neuronas
 
-## Ejercicio 4 - Desarrollo de una red convolucional con TensorFlow
+## Ejercicio 5 - Desarrollo de una red convolucional con TensorFlow
 
 El objetivo de este ejercicio es construir nuestra red de neuronas convolucional mediante la utilización de tensorflow. Para su realización vamos a reutilizar parte del código que hemos desarrollado en el (ejercicio 3)[./ejercicio_3.md]. 
 
