@@ -7,13 +7,13 @@ El objetivo de este ejercicio es construir nuestra red de neuronas convolucional
 
 **Paso 1: Instalación de paquetes y despligue de TensorFlow Board**
 
-En este primer paso hay que incluir nuevos paquetes a instalar con el objetivo de utilizar keras y TensorFlow Board. Para hay que incluir el siguiente código al comienzo del cuaderno. 
+En este primer paso hay que incluir los paquetes que deben ser instalados con el objetivo de utilizar keras y TensorFlow Board. Para ello es necesario incluir el siguiente código al inicio del cuaderno. 
 
 ```
 !pip install pandas scikit-learn numpy seaborn matplotlib numpy tensorflow==1.15 requests
 ```
 
-Este comando nos permite cargar la extensión de TensorFlow Board. 
+Este comando permite cargar la extensión de TensorFlow Board. 
 
 ```
 %load_ext tensorboard
@@ -106,8 +106,8 @@ Una vez definadas la variables de entrada y salida con su formato (shape) podemo
 
 - Capa convolucional 1: Capa convolucional que aplica un filtro convolucional de 3 x 3, pooling de 2 x 2 con una función de activación ReLU con entrada de 28 neuronas y salida de 32 neuronas. 
 - Capa convolucional 2: Capa convolucional que aplica un filtro convolucional de 3 x 3, pooling de 2 x 2 con una función de activación ReLU con entrada de 32 neuronas y salida de 64 neuronas. 
-- Capa fully connected: Capa de tipo flaten que aplana la información en un array. Suele utilizarse como capa inicial para aplanar las imágenes y transformarlas en un secuencia de píxeles.
-- Capa salida: Capa de salida densa con entrada de 512 neuronas y salida de 10 neuronas (labels). 
+- Capa fully connected: Capa de tipo flaten que aplana la información en un array. Se suele utilizar como capa inicial para aplanar la imagen de entrada que se corresponde con una matriz y transformarla en un secuencia de píxeles.
+- Capa salida: Capa de salida densa con entrada de 1600 neuronas y salida de 10 neuronas (labels). 
 
 ```
 net = Sequential()
