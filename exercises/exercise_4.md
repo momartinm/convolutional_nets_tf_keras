@@ -1,12 +1,67 @@
 ## Taller de construcción de redes de neuronas convolucionales 
 ### Machine Learning, Tensor Flow, Keras, Redes de neuronas
 
-## Ejercicio 4 - Desarrollo de una red convolucional con TensorFlow
+## Ejercicio 4 - Desarrollo de una red convolucional con Keras
 
-El objetivo de este ejercicio es construir nuestra red de neuronas convolucional mediante la utilización de tensorflow. 
+El objetivo de este ejercicio es construir nuestra red de neuronas convolucional mediante la utilización de Keras. Para su realización vamos a reutilizar parte del código que hemos desarrollado en el (ejercicio 3)[./ejercicio_3.md]. 
+
+**Paso 1: Instalación de paquetes y despligue de TensorFlow Board**
+
+En este primer paso hay que incluir los paquetes que deben ser instalados con el objetivo de utilizar keras y TensorFlow Board. Para ello es necesario incluir el siguiente código al inicio del cuaderno. 
+
+```
+!pip install pandas scikit-learn numpy seaborn matplotlib numpy keras tensorflow==1.15 requests
+```
+
+Este comando permite cargar la extensión de TensorFlow Board dentro de los cuadernos juputer, de forma que se despligue de manera embebida. 
+
+```
+%load_ext tensorboard
+```
+
+**Paso 2. Definición de paquetes a importar**
+
+Para la realización de este ejercicio tenemos que importar nuevas librerías relacionadas con keras. Para ello es necesario modificar los paquetes importados que vamos a utilizar con respecto al ejercicio anterior. 
+
+```
+import input_data
+import numpy as np
+import matplotlib.pyplot as plt
+import tensorflow as tf
+import os
+import os.path
+import requests 
+import math
+import datetime
+from time import time
+
+from keras.callbacks import TensorBoard
+from keras.models import Sequential
+from keras.layers import Dense, Conv2D, Flatten, MaxPooling2D, Dropout
+from keras import optimizers
+from keras.utils import plot_model
+from keras.models import model_from_json
+```
+
+Para el desarrollo de los diferentes ejercicios vamos a necesitar un conjunto de liberías que servirán para lo siguiente:
+
+* input_data: Nos ofrece funcionalidad para cargar la información utilizando el formato propuesto por MNist. 
+* numpy: Nos ofrece funcionalidad para la manipulación de arrays y conjunto de datos. 
+* matplotlib: Nos ofrece funcionalidad para la visualización de datos. 
+* tensorflow: Nos ofrece funcionalidad para la construacción de procesos de entrenamiento. 
+* os: Nos ofrece funcionalidad para la manipulación de recursos del sistema operativo. 
+* os.path: Nos ofrece funcionalidad para la manipulación del sistema de ficheros del sistema operativo.
+* requests: Nos ofrece funcionalidad para la descarga de archivos.
+* math: Nos ofrece funcionalidad para la realización de operaciones matemáticas complejos (no elementales).
+* time: Nos ofrece funcionalidad para la obtención de information referente al tiempo, para crear contadores o archivos de log. 
+* Keras.model: Nos ofrece diferente tipo de modelos, en este caso vamos a utilizar el modelo secuencial. 
+* Keras.layers: Nos ofrece diferentes tipo de capas para incluir en una red de neuronas.
+* optimizers from keras: Nos ofrece diferentes tipos de algoritmos de optimización, en nuestro caso utilizaremos el optimizador de Adams. 
+* Keras.utils: Nos ofrece diferentes funcionalidades para obtener información de la red construida. 
+* TensorBoard: Nos ofrece diferentes funcionalidades para cargar información en tensorborad y poder visualizar la evoluación de nuestros algoritmos. 
 
 
-**Paso 1: Definición de conjuntos de entrenamiento y test para el proceso de entrenamiento**
+**Paso 3. Definición de conjuntos de entrenamiento y test para el proceso de entrenamiento**
 
 El primer paso consiste en dividir la información entre los conjuntos de entrenamiento y test. Para ello crearemos 4 variables denominadas train y test e identificadas con __X__ para los ejemplos e __y__ para las clases o etiquetas (labels). 
 
@@ -19,327 +74,129 @@ test_y = full_data.test.labels
 
 n_input = image_size * image_size
 n_output = len(LABELS)
-weights = list()
-biases = list()
 ```
 
-Para la construcción de la red de neuronas vamos a definir una serie de variables para almacenar la información de las diferentes capas:
+Para la construcción de la red de neuronas vamos a definir una serie de variables para almacenar la información de la entrada y la salida:
 
 - n_input: Se corresponde con el número de neuronas de entrada.
 - n_output: Se corresponde con el número de neuronas de salida. Este valor se corresponderá con el número de labels o etiquetas. 
-- weights: Se corresponde con un conjunto de pesos, cada uno aplicado a una capa. 
-- biases: Se corresponde con un conjunto de bias, cada uno aplicado a una de las capas de las red. Existe una correspondencias 1 a 1 entre los elementos de la lista weights y la lista biases. 
 
+**Paso 4. Inicialización del grafo (TensorFLow)**
 
-**Paso 2: Construcción de capa convolución (Función)**
-
-A continuación vamos a construir tres funciones para construir nuestras capas convolucionales (convolución + bias + function) y nuestras capas fully connected. Para ello crearemos una función denominada __conv2d__ que utilizará 4 parámetros de entrada:
-
-- x: Se corresponde con la capa anterior. En el caso de la primera capa, este valor se corresponde con la imagen de entrada. Es importante tener en cuenta que el shape de este valor debe ser igual que el shape de los pesos (weights) de la capa. 
-- W: Se corresponde con los pesos que se asignarán a la capa convolucional. 
-- b: Se corresponde con el bias que se aplicará sobre las capa convolucional. 
-- strides: Se corresponde con el salto de la ventana deslizante para cada una de las dimensiones de la entrada de la capa. Su valor puedes ser 1, 2 o 4 y por defecto es siempre 1. En este caso el valor de la primera capa debe ser 1 debido a que estamos trabajando con imágenes en blanco y negro que sólo tiene un canal y por tanto una dimensión. Si se da un único valor, se replica en la dimensión Height y Weight.
-
-```
-def conv2d(x, W, b, strides=1):
-    x = tf.nn.conv2d(x, W, strides=[1, strides, strides, 1], padding='SAME')
-    x = tf.nn.bias_add(x, b)
-    return tf.nn.relu(x) 
-```
-
-Esta función construye la estructura de una red de neuronas basada en una capa convolucional que utiliza los pesos, un bias (sesgo) y por última la utilización de una función de activación. En este caso hemos decidido utilizar un función [relu](https://www.kaggle.com/dansbecker/rectified-linear-units-relu-in-deep-learning). 
-
-Con respecto a la función __conv2d__ de tensorflow que aplicar el filtro convoluciona, es importande describir el objeto de la opción __padding__. Se selecciona el valor  __SAME__ para la opción padding con el objetivo de garantizar que los pixeles de los bordes la imagen no se omitan durante el proceso de convolución. De forma que se añadiran pixeles con ceros alrededor de la imagen con el objetivo que se pueda aplicar el filtro de la convolución sobre todos los pixeles. 
-
-**Paso 3: Construcción de capa pool (Función)**
-
-La segunda función que vamos a definir es al función denominada __maxpool2d__ que tendrá dos parámetros de entrada:
-
-- x: Se corresponde con la entrada y es el resultado de la la función __conv2d__. 
-- k: Se corresponde con el tamaño del kernel aplicado a la capa de pooling (k x k). Su valor por defecto es 2. 
-
-```
-def maxpool2d(x, k=2):
-    return tf.nn.max_pool(x, ksize=[1, k, k, 1], strides=[1, k, k, 1], padding='SAME')
-```
-
-Esta función realiza una operación de tipo max pool con un kernell de 2x2. Al igual que en el filtro convolucional, se realiza un padding con el fin de incluir todos los pixeles de la imagen. 
-
-**Paso 4: Construcción de capa fully connected (Función)**
-
-Por último vamos a crear una función denominado __fully_connected__ que tendrá 3 paramétros de entrada:
-
-- x: Se corresponde con la capa anterior. En el caso de la primera capa, este valor se corresponde con la imagen de entrada. Es importante tener en cuenta que el shape de este valor debe ser igual que el shape de los pesos (weights) de la capa. 
-- W: Se corresponde con los pesos que se asignarán a la capa convolucional. 
-- b: Se corresponde con el bias que se aplicará sobre la capa convolucional.
-
-```
-def fully_connected(x, w, b):
-    x = tf.reshape(x, [-1, w.get_shape().as_list()[0]])
-    x = tf.add(tf.matmul(x, w), b)
-    return tf.nn.relu(x)
-```
-
-Debido a que estamos realizando un proceso de clasificación debemos aplicar una función de fully connected que conecta cada neurona en la capa anterior (última capa convolucional) a cada neurona en la capa siguiente. Este proceso se puede considerar como como la aplicación de perceptrón multicapa (MLP) tradicional. La matriz de aplanada atraviesa una capa completamente conectada para clasificar las imágenes.
-
-**Paso 5: Construcción de red de neuronas (Función)**
-
-Una vez que hemos definidos nuestras funciones auxiliares para la creación de la capas de nuestra red vamos construir una función para la generación de redes convolucionales genéricas. Para ellos crearemos la función __generate_network__ que tendrá 6 parámetros de entrada:
-
-- x: Se corresponde con la estructura de la imagen de entrada. 
-- weights: Se corresponde con la lista de pesos de todas la capas de la red. El orden de los pesos en la lista se corresponde con el orden de las capas de las red.
-- biases: Se corresponde con la lista de bias de todas la capas de la red. El orden de los bias en la lista se corresponde con el orden de las capas de las red y por tanto existe una correspondecia 1 a 1 con la lista de pesos. 
-- layers: Es un array que indica el tipo de las capas. Siendo su valor 1 para las capas de tipo convolucional y 2 para la capas de tipo Fully connected layer. Normalmente las red de neuronas convolucional sólo tiene una capa de fully connected al final pero es posible añadir más. 
-- drop_out: Es un valor boolean que indica si se quiere aplicar drop out para la red. Su valor por defecto es False. 
-- dropout: Es el valor de drop our que se quiere aplicar sobre la red. 
-
-
-```
-def generate_network(x, weights, biases, layers, drop_out=False, dropout=None):
-    
-    # Tensor input 4-D: [Batch Size, Height, Width, Channel]
-    previous_layer = tf.reshape(x, shape=[-1, 28, 28, 1])
-    new_layer = None
-    
-    for i in range(len(layers)-1):
-        if layers[i] == 1: #Convolutional layer
-            new_layer = conv2d(previous_layer, weights[i], biases[i])
-            new_layer = maxpool2d(new_layer, k=2)
-        
-        if layers[i] == 2: #Fully connected layer
-            new_layer = fully_connected(previous_layer, weights[i], biases[i])
-        
-        previous_layer = new_layer
-        
-    if drop_out:
-        previous_layer = tf.nn.dropout(previous_layer, dropout)
-    
-    return tf.add(tf.matmul(previous_layer, weights[len(layers)-1]), biases[len(layers)-1])
-```
-
-Esta función construye una red de neuronas formada por diferentes capas convoluciones y fully connected añadiendo al final el coeficiente de dropout y la última capa que generar el resultado de las n neuronas de salida que se corresponde con las diferentes clases en las que queremos clasificar nuestras imagenes. Cada una de las neuronas devolverá una valor numérico siendo la clases con mayor valor la que indica la clasificación. 
-
-
-**Paso 6: Inicialización del grafo (TensorFLow)**
+TensorFlow es una framework que transforma el código fuente en grafo de operaciones que pueden ser ejecutadas de forma secuencial o paralela dependiendo de sus interacciones. Con el objetivo de eliminar cualquier tipo de información previo tenemos que resetear el grafo por defecto. 
 
 ```
 tf.reset_default_graph()
 ```
 
-**Paso 7: Inicialización de placeHolders**
+**Paso 5. Inicialización de placeHolders**
 
-Una vez que hemos definido la función de generación, podemos construir nuestra red de neuronas y definir las variables necesarias para el proceso de aprendiaje.  En este caso utilizaremos sólo dos variables de tensorflow:
+Una vez que hemos definido la función de generación, podemos construir nuestra red de neuronas y definir las variables necesarias para el proceso de aprendiaje.  En este caso utilizaremos sólo los placeholders de tensorflow:
 
-- placeholder: - placeholder: Son las variables de entrada (inputs) y salida (output) del algoritmo. Se generan mediante el método __tf.placeholder__ y se utilizan para definir el grafo de tensorflow sin la necesidad de haberles asignado un valor inicial. 
-- variable: Son las variables que se modificarán durante el proceso de entrenamiento. Se generan mediante el método __tf.variable__ y se utilizan para definir variables dinámicas que tienen valor desde el inicio. En caso de que no se asigne valor, estas variables son inicializadas de manera aleatoria. 
+- placeholder: Son las variables de entrada (inputs) y salida (output) del algoritmo. Se generan mediante el método __tf.placeholder__ y se utilizan para definir el grafo de tensorflow sin la necesidad de haberles asignado un valor inicial. 
 
 ```
 x = tf.placeholder("float", [None, n_input])
 y = tf.placeholder("float", [None, n_output])
 ```
 
-**Paso 8: Inicialización de variables**
+**Paso 6. Generación de la red**
 
 Una vez definadas la variables de entrada y salida con su formato (shape) podemos construir nuestra red de neuronas que estará compuesta de tres 4 capas: 
 
 - Capa convolucional 1: Capa convolucional que aplica un filtro convolucional de 3 x 3, pooling de 2 x 2 con una función de activación ReLU con entrada de 28 neuronas y salida de 32 neuronas. 
 - Capa convolucional 2: Capa convolucional que aplica un filtro convolucional de 3 x 3, pooling de 2 x 2 con una función de activación ReLU con entrada de 32 neuronas y salida de 64 neuronas. 
-- Capa fully connected: Capa fully connected con una función de activación ReLU con entrada de 64 y salida 512 neuronas. 
-- Capa salida: Capa de salida con entrada de 512 neuronas y salida de 10 neuronas (labels). 
+- Capa fully connected: Capa de tipo flaten que aplana la información en un array. Se suele utilizar como capa inicial para aplanar la imagen de entrada que se corresponde con una matriz y transformarla en un secuencia de píxeles.
+- Capa salida: Capa de salida densa con entrada de 1600 neuronas y salida de 10 neuronas (labels). 
 
 ```
-#Capa convolucional 32 filtro 3x3
-weights.append(tf.get_variable('W0', shape=(3,3,1,32)))
-biases.append(tf.get_variable('B0', shape=(32)))
-
-#Capa convolucional 64 filtro 3x3
-weights.append(tf.get_variable('W1', shape=(3,3,32,64)))
-biases.append(tf.get_variable('B1', shape=(64)))
-
-#Capa Densa 1024 unidades
-weights.append(tf.get_variable('D1', shape=(7*7*64, 1024)))
-biases.append(tf.get_variable('BD1', shape=(1024)))
-
-#Capa salida 10 clases
-weights.append(tf.get_variable('OUT', shape=(1024,n_output)))
-biases.append(tf.get_variable('BOUT', shape=(n_output)))
+net = Sequential(name="KerasCNN")
+net.add(Conv2D(32, kernel_size=3, activation='relu', input_shape=(28,28,1)))
+net.add(MaxPooling2D(pool_size=2))
+net.add(Conv2D(64, kernel_size=3, activation='relu'))
+net.add(MaxPooling2D(pool_size=2))
+net.add(Flatten())
+net.add(Dense(10, activation='softmax'))
+net.add(Dropout(0.2))
 ```
 
-<img src="./img/neurons_1.png" alt="Estructura de la red de neuronas" width="800"/>
-
-**Paso 9: Generación de la red**
-
-```
-net = generate_network(x, weights, biases, [1, 1, 2, 3])
-```
-
-**Paso 10: Definición de función de loss**
+<img src="../img/neurons_1.png" alt="Estructura de la red de neuronas" width="800"/>
 
 
-Para la realización del proceso de aprendizaje es necesario definir algunos elementos básicos. En primer lugar vamos a definir la función de activación de la salida de la red de neuronas. Debido a que estamos construyendo un modelo de clasificación multi-clase utilizaremos un función de activación de tipo __softmax__ sobre las neuronas de salida de forma que obtengamos un valor probabilstico para cada uno de los labels. Esta función será combinada con un  [cross-entropy](https://ml-cheatsheet.readthedocs.io/en/latest/loss_functions.html) para calcular la función de loss. Vamos a utilizar esta función debido dos propiedades esenciales que se esperan para una función de coste: (1) el resultado es siempre positivo; y (2) el resultado tiende a cero según mejora la salida deseada (y) para todas las entradas del conjunto de entrenamiento (X). 
+**Paso 7. Definición de función de optimización**
 
+A continuación tenemos que definir la función de obtimización que utilizaremos para minimizar el valor de función de coste. Para este ejecicio vamos a utilizar el algoritmo de [Adam](https://arxiv.org/abs/1412.6980https://arxiv.org/abs/1412.6980) con el fin de minimizar el coste del error mediante la función __optimizers.Adam__. 
 
 ```
-cost = tf.reduce_mean(
-    tf.nn.softmax_cross_entropy_with_logits(
-        logits=net, 
-        labels=y))
+optimizer = optimizers.Adam(learning_rate=0.002, beta_1=0.9, beta_2=0.999)
 ```
 
-**Paso 11: Definición de función de optimización**
+**Paso 8. Compilación de la red**
 
-A continuación tenemos que definir la función de obtimización que utilizaremos para minimizar el valor de función de coste. Para este ejecicio vamos a utilizar el algoritmo de [Adam](https://arxiv.org/abs/1412.6980https://arxiv.org/abs/1412.6980) con el fin de minimizar el coste del error mediante la función __tf.train.AdamOptimizer__. 
-
-```
-learning_rate = 0.001
-
-optimizer = tf.train.AdamOptimizer(
-    learning_rate=learning_rate).minimize(cost)
-```
-
-**Paso 12: Definición de función de entrenamiento**
-
-Además de las dos operaciones básicas de un proceso de aprendizaje, vamos a añadir dos funciones más a nuestro grafo de operaciones más para realizar el proceso de test. Estas operaciones serán __correct_prediction__ y __accuracy__ que nos permitirán evaluar el modelo después de cada iteración de entrenamiento utilizando todos los elementos del conjunto de entrenamiento. 
-
+A continuación debemos compilar nuestra red utilizando un algoritmo de optimización, una función de loss, que en este caso utilizado la función de cruze de entropia categorizada y por último definimos la metrica que utilizaremos para el proceso de entrenamiento que será el __accuracy__. 
 
 ```
-correct_prediction = tf.equal(tf.argmax(net, 1), tf.argmax(y, 1))
-accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+net.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
+net.summary()
 ```
 
-**Paso 13: Definición de bucle de entrenamiento (Función)**
+Además una vez compilada la red, utilizaremos la función __summary__ que nos presenta un resumen de la estructura de la red que hemos creado (capas, orden de las capas, variables a entrenar, etc). 
 
-Una vez que se han definido todas las variables y funciones necesarias para el proceso de aprendizaje, podemos construir el bucle en tensorflow. Para ello primero deberemos inicializar la variables mediante el método __tf.global_variables_initializer__. Este método inicializará todas las variables definidas previamente cuando se ejecute dentro de la sesion. A continuación será necesario crear una sesión en tensorflow para poder ejecutar todas nuestras funciones, siendo la primera la que inicializa la variables mediante la ejecución del método __session.run(init)__ de la sesión previamente creada. A continuación definiremos un conjunto de variables que almacenarán la información de cada una de nuestras iteraciones con el fin de poder visualizar la evolución del proceso. 
+**Paso 9. Definición de bucle de entrenamiento (Función)**
 
-```
+Una vez que se han definido todas las variables y funciones necesarias para el proceso de aprendizaje, podemos crear la función de entrenamiento. En este caso la función es muy sencilla y formada por tres parámetros:
 
-log_dir = "./logs/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+- net: Que se corresponde con la red secuencial que hemos definido previamente.
+- training_iters: Que se corresponde con el número de iteraciones del proceso de entrenamiento.
+- batch_size: Que se corresponde con el tamaño de los conjuntos de entrenamiento que se utilizarán. 
 
-def train(training_iters, learning_rate, batch_size = 128):
 
-    init = tf.global_variables_initializer()
-
-    with tf.Session() as sess:
-
-        sess.run(init) 
-
-        train_loss = []
-        test_loss = []
-        train_accuracy = []
-        test_accuracy = []
-
-        writer = tf.summary.FileWriter(log_dir, sess.graph)
+Esta función realiza una reestructuración de los datos de los conjuntos de entrenamiento y test para ajustarlos al formato y tamaño de las imágenes que hemos definido en caso de que existe alguna discrepancia y ejecuta el proceso de entrenamiento mediante la utilización del método __fit__ que ejecuta un proceso similar al que definimos en el ejercicio anterior. Además en este caso incluimos un __callback__ con el objetio de recolectar información que nos permita visualizar la evolución del proceso de entrenamiento mediante TensorBoard. 
 
 ```
+logdir = "./logs/scalars/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
-Una vez inicializadas las variables podemos comenzar el bucle de aprendizaje que se ejecutará tantas veces como iteraciones de entrenamiento. Cada iteraciones (epoch) se divirá en un conjunto de micro iteraciones utiliando barch de imágenes. Para cada uno de esto barch se aplicará la función de optimización y luego se obtendrá el coste (loss) y la exactitud (accuracy) del modelo. 
-
-```
-        for epoch in range(training_iters):
-
-            for batch in range(len(train_X)//batch_size):
-
-                batch_x = train_X[batch*batch_size:min((batch+1)*batch_size,len(train_X))]
-                batch_y = train_y[batch*batch_size:min((batch+1)*batch_size,len(train_y))]    
-
-                opt = sess.run(optimizer, feed_dict={x: batch_x, y: batch_y})
-                loss, acc = sess.run([cost, accuracy], feed_dict={x: batch_x,
-                                                                  y: batch_y})
-	    
-            writer.add_summary(tf.Summary(value=[tf.Summary.Value(tag="loss", simple_value=loss)]), 
-                               epoch)
-            
-            writer.add_summary(tf.Summary(value=[tf.Summary.Value(tag="accuracy", simple_value=acc)]), 
-                                epoch)
-
-```
-Estos valores se mostrarán cada 10 iteraciones con el fin de visualizar la evolución de nuestro proceso de entrenamiento. 
-
-```
-            if (epoch + 1) % 10 == 0:
-                print("Iteración " + str(epoch+1) + ", Loss= " + \
-                      "{:.6f}".format(loss) + ", Exactitud= " + \
-                      "{:.5f}".format(acc))
-	
-		save_path = saver.save(sess, "./models/model" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + ".ckpt")
-                
-            test_acc, valid_loss = sess.run([accuracy,cost], feed_dict={x: test_X,y : test_y})
-            train_loss.append(loss)
-            test_loss.append(valid_loss)
-            train_accuracy.append(acc)
-            test_accuracy.append(test_acc)
-
-        print("Aprendizaje finalizado")
-
-```
-
-Una vez finalizado el proceso de entrenamiento, calcularemos los resultados finales con respeto al conjunto de test. 
-
-```
-
-        test_acc, valid_loss = sess.run([accuracy,cost], feed_dict={x: test_X,y : test_y})
-        train_loss.append(loss)
-        test_loss.append(valid_loss)
-        train_accuracy.append(acc)
-        test_accuracy.append(test_acc)
-        print("Accuracy test:","{:.5f}".format(test_acc))
-
-        summary_writer.close()
-        
-        return [train_loss, test_loss, train_accuracy, test_accuracy]
-```
-
-**Paso 14: Visualización de resultados (Función)**
-
-Una vez realizado el proceso de entrenamiento vamos a utilizar la información recolectada por el proceso de entrenamiento con el fin de visualizar su evolución. Para ellos vamos a crear una función que denominaremos __print_results__ y utilizará 7 parámetros de entrada:
-
-- train: Es el conjunto de los valores de coste (loss) del conjunto de entrenamiento en cada iteración. 
-- test: Es el conjunto de los valores de coste (loss) del conjunto de test en cada iteración. 
-- labels: Es un array bidimensional donde se incluye el nombre que se le dará a cada una de las curvas.
-- Legend: Es un string que almacena el nombre que se le dará a la gráfica. 
-
-```
-def print_results(train, test, labels, legend):
+def train(net, training_iters, batch_size = 128):
     
-    plt.plot(range(len(train)), train, 'b', label=labels[0])
-    plt.plot(range(len(test)), test, 'r', label=labels[1])
-    plt.title('Entrenamiento y test')
-    plt.xlabel('Iteraciones',fontsize=16)
-    plt.ylabel(legend,fontsize=16)
-    plt.legend()
-    plt.figure()
-    plt.show()
+    num_images = train_X.shape[0]
+    x_shaped_array = train_X.reshape(len(train_X), 28, 28, 1)
+    x_test_shaped_array = test_X.reshape(len(test_X), 28, 28, 1)
 
+    tensorboard_callback = TensorBoard(log_dir='logs/{}'.format(time()))
+    
+    net.fit(
+      x_shaped_array,
+      train_y,
+      batch_size=batch_size,
+      epochs=training_iters,
+      validation_data=(x_test_shaped_array, test_y),
+      callbacks=[tensorboard_callback]
+    )
+    
+    return net
 ```
 
-**Paso 15: Ejecución del proceso de entrenamiento**
+**Paso 10. Ejecución del proceso de entrenamiento**
 
 Una vez construidas nuestras funciones podemos ejecutar nuestro proceso de aprendizaje de la siguiente manera, ejecutando el proceso de aprendizaje durante 100 iteraciones con una tasa de aprendizaje del 0.001 y un tamaño de batch de 128 imágenes. 
 
 ```
-!rm -rf ./logs/
-results = train(10, 0.001, 128)
-print_results(results[0], results[1], ['Loss entrenamiento', 'Loss test'], 'Loss')
-print_results(results[2], results[3], ['Acurracy entrenamiento', 'Acurracy test'], 'Acurracy')
+final_net = train(net, 10, 128)
+print_results(final_net)
 ```
 
-Siendo el resultado obtenido tras ejecutar el codígo el siguiente:
+**Paso 11. Visualización de los resultados con TensorFlowBoard**
 
-```
-Iteración 10, Loss= 0.091082, Exactitud= 0.94531
-Aprendizaje finalizado
-Exactitud test: 0.89510
-```
-
-<img src="../img/regresion_conv_neurons_1.png" alt="Resultado de aprendizaje tras 10 iteraciones" width="800"/>
-
-
-**Paso 16: Ejecución del proceso de entrenamiento**
-
-Es posible visualizar la información mediante TensorFlow Board con el objetivo de poder obtener toda la información sobre el proceso de aprendizaje. Para ello es necesario incluir el siguiente comando y ejercutar el fragmento del cuarderno. TensorBoard utilizar los ficheros de logs que se han generado en el fichero que indiquemos como valor del parámetro __logdir__, que en este caso se corresponde con la carpeta logs que hemos utilizado para almacenzar los logs generados en el proceso de entrenamiento del paso 13. 
+Es posible visualizar la información mediante TensorFlow Board con el objetivo de poder obtener toda la información sobre el proceso de aprendizaje. Para ello es necesario incluir el siguiente comando y ejercutar el fragmento del cuarderno. TensorBoard utilizar los ficheros de logs que se han generado en el fichero que indiquemos como valor del parámetro __logdir__, que en este caso se corresponde con la carpeta logs que hemos utilizado para almacenzar los logs generados en el proceso de entrenamiento del paso 10. 
 
 ```
 %tensorboard --logdir logs
 ```
+
+Tras la ejecución podremos ver a través del interfaz web, embevida en nuestro cuaderno, el resultado de nuestro proceso de aprendizaje, como se muestra en la siguiente imagen:
+
+<img src="../img/tensorboard_1.png" alt="Resultado de un proceso de aprendizaje mediante TensorBoard" width="800"/>
+
+Si ejecutamos este comando antes del proceso de aprendizaje podremos ver en tiempo real la evolución del proceso, ya que TensorBoard tiene un sistema de refresco de 30 segundos. 
 
 
