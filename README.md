@@ -10,6 +10,7 @@ Las redes convolucionales son un tipo de red neuronal que ha hecho muy popular e
 
 En este taller se describe el proceso de construcción de un red de neuronas de tipo convolucional para la identificación de diferentes de prendas de ropa. Para el desarrollo del taller se ha plantenado el siguiente roadmap el cual se encuentra formado por dos grupos de ejercicios. Los ejercicios 1 y 2 son los referentes al despliegue de la plataforma para el desarrollo de los cuadernos (notebooks) y los otros tres ejercicios se corresponde con la preparación de los datos y los procesos de entrenamiento mediante Keras y TensorFlow. 
 
+* Teoría - [Aprendizaje Automático y redes neuronales](./slides.pdf)
 * Ejercicio 1 - Jupyter Notebook sobre Docker 
     - Ejercicio 1.1 - [Instalación de Docker](./exercises/exercise_1_1.md)
     - Ejercicio 1.2 - [Desplegando mi servidor Jupyter](./exercises/exercise_1_2.md)
