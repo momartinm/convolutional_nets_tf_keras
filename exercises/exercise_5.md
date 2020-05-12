@@ -362,5 +362,19 @@ Has aprendido como construir un modelo basado en Machine Learning mediante la ut
 
 1. Como desplegar TensorBoard en un entorno Notebook.
 2. Como definir los conjuntos de entrenamiento y test.
+3. Como crear una función para crear capas de tipo convolucional. 
+4. Como crear una función para crear capas de tipo flatten. 
+5. Como definir de manera matemática la función de loss. 
+6. Como iniciar el grafo de TensorFlow para realizar un proceso de aprendizaje. 
+7. Como crear variables de tipo PlaceHolder en TensorFlow. 
+8. Como crear variables de tipo Variable en TensorFlow. 
+9. Como definir el algortimo de optimización. 
+10. Como crear un función para construir un red de neuronas con múltiples capas.
+11. Como construir el bucle de entrenamiento reutilizable modificando algunos de los hiperámetros
+12. Como insertar información del proceso de entrenamiento en TensorBoard. 
+13. Como visualizar datos referentes al proceso de entrenamiento mediante TensorBoard. 
+
+<img src="../img/ejercicio_5_congrats.png" alt="Congrats ejercicio 5" width="800"/>
+
 
 
