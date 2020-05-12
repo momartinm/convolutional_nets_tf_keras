@@ -356,4 +356,11 @@ Es posible visualizar la información mediante TensorFlow Board con el objetivo 
 %tensorboard --logdir logs
 ```
 
+**Congratulations Ninja!**
+
+Has aprendido como construir un modelo basado en Machine Learning mediante la utilización de TensorFlow. Has conseguido aprender:
+
+1. Como desplegar TensorBoard en un entorno Notebook.
+2. Como definir los conjuntos de entrenamiento y test.
+
 

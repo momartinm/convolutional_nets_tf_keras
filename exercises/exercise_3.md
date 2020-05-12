@@ -225,3 +225,17 @@ def plot_image(plt, data, label, size, location):
     plt.imshow(img)
     plt.title("(Label: " + str(LABELS[label]) + ")")
 ```
+
+**Congratulations Ninja!**
+
+Has aprendido como preparar los datos para el proceso de aprendizaje, como definir las clases del modelo y como distribuir los conjunto de entrenamiento y test. Has conseguido aprender:
+
+1. Como instalar paquetes en un notebook. 
+2. Como descargar archivo mediante python request.
+3. Como definir las clases o etiquetas (label) para la construcción de un modelo de aprendizaje. 
+4. Como realizar un análisis básico sobre los datos de entrenamamiento y test.
+5. Como visualizar imágenes mediante matplotlib. 
+
+<img src="../img/ejercicio_3_congrats.png" alt="Congrats ejercicio 3" width="800"/>
+
+

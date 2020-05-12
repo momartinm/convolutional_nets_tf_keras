@@ -200,3 +200,19 @@ Tras la ejecución podremos ver a través del interfaz web, embevida en nuestro 
 Si ejecutamos este comando antes del proceso de aprendizaje podremos ver en tiempo real la evolución del proceso, ya que TensorBoard tiene un sistema de refresco de 30 segundos. 
 
 
+**Congratulations Ninja!**
+
+Has aprendido como construir un modelo basado en Machine Learning mediante la utilización de Keras. Has conseguido aprender:
+
+1. Como desplegar TensorBoard en un entorno Notebook.
+2. Como definir los conjuntos de entrenamiento y test.
+3. Como iniciar el grafo de TensorFlow para realizar un proceso de aprendizaje. 
+4. Como crear una variable de tipo PlaceHolder en TensorFlow. 
+5. Como construir una red mediante Keras.
+6. Como definir la función de optimización. 
+7. Como construir el bucle de entrenamiento. 
+8. Como visualizar datos referentes al proceso de entrenamiento mediante TensorBoard. 
+
+<img src="../img/ejercicio_4_congrats.png" alt="Congrats ejercicio 4" width="800"/>
+
+
