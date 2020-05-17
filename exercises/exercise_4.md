@@ -10,7 +10,7 @@ El objetivo de este ejercicio es construir nuestra red de neuronas convolucional
 En este primer paso hay que incluir los paquetes que deben ser instalados con el objetivo de utilizar keras y TensorFlow Board. Para ello es necesario incluir el siguiente código al inicio del cuaderno. 
 
 ```
-!pip install pandas scikit-learn numpy seaborn matplotlib numpy keras tensorflow==1.15 requests
+!pip install pandas scikit-learn numpy seaborn matplotlib numpy tensorflow==1.15 h5py keras json
 ```
 
 Este comando permite cargar la extensión de TensorFlow Board dentro de los cuadernos juputer, de forma que se despligue de manera embebida. 
@@ -33,6 +33,8 @@ import os.path
 import requests 
 import math
 import datetime
+
+from tensorflow import keras
 from time import time
 
 from keras.callbacks import TensorBoard
@@ -115,9 +117,9 @@ net.add(Conv2D(32, kernel_size=3, activation='relu', input_shape=(28,28,1)))
 net.add(MaxPooling2D(pool_size=2))
 net.add(Conv2D(64, kernel_size=3, activation='relu'))
 net.add(MaxPooling2D(pool_size=2))
+net.add(Dropout(0.2))
 net.add(Flatten())
 net.add(Dense(10, activation='softmax'))
-net.add(Dropout(0.2))
 ```
 
 <img src="../img/neurons_1.png" alt="Estructura de la red de neuronas" width="800"/>
@@ -128,15 +130,15 @@ net.add(Dropout(0.2))
 A continuación tenemos que definir la función de obtimización que utilizaremos para minimizar el valor de función de coste. Para este ejecicio vamos a utilizar el algoritmo de [Adam](https://arxiv.org/abs/1412.6980https://arxiv.org/abs/1412.6980) con el fin de minimizar el coste del error mediante la función __optimizers.Adam__. 
 
 ```
-optimizer = optimizers.Adam(learning_rate=0.002, beta_1=0.9, beta_2=0.999)
+optimizer_fn = optimizers.Adam(learning_rate=0.002, beta_1=0.9, beta_2=0.999)
 ```
 
 **Paso 8. Compilación de la red**
 
-A continuación debemos compilar nuestra red utilizando un algoritmo de optimización, una función de loss, que en este caso utilizado la función de cruze de entropia categorizada y por último definimos la metrica que utilizaremos para el proceso de entrenamiento que será el __accuracy__. 
+A continuación debemos compilar nuestra red utilizando un algoritmo de optimización, una función de loss, que en este caso utilizado la función de cruze de entropia categorizada con logits y por último definimos la metrica que utilizaremos para el proceso de entrenamiento que será el __accuracy__. 
 
 ```
-net.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
+net.compile(optimizer=optimizer_fn, loss='categorical_crossentropy', metrics=['accuracy'])
 net.summary()
 ```
 
@@ -181,8 +183,7 @@ def train(net, training_iters, batch_size = 128):
 Una vez construidas nuestras funciones podemos ejecutar nuestro proceso de aprendizaje de la siguiente manera, ejecutando el proceso de aprendizaje durante 100 iteraciones con una tasa de aprendizaje del 0.001 y un tamaño de batch de 128 imágenes. 
 
 ```
-final_net = train(net, 10, 128)
-print_results(final_net)
+model = train(net, 10, 128)
 ```
 
 **Paso 11. Visualización de los resultados con TensorFlowBoard**
@@ -200,6 +201,87 @@ Tras la ejecución podremos ver a través del interfaz web, embevida en nuestro 
 Si ejecutamos este comando antes del proceso de aprendizaje podremos ver en tiempo real la evolución del proceso, ya que TensorBoard tiene un sistema de refresco de 30 segundos. 
 
 
+**Paso 12: Almacenamiento de nuestro modelo**
+
+Una vez que hemos construido nuestro modelo, podemos almacenarlo con dos objetivos: (1) utilizar para realizar inferencia sobre nuevos datos; y (2) cargarlo para seguir aprendiendo en el futuro con un nuevo conjunto de datos. Para ello es necesario almacenar la información del modelo mediante dos ficheros:
+
+* Fichero de tipo json que almacena la estructura de la red que hemos construido.
+* Fichero de tipo h5 que almacena la información de los pesos de las neuronas de nuestro red. 
+
+Para poder generaro estos dos ficheros debemos utilizar el siguiente fragmento de código:
+
+```
+
+model_folder = "models"
+
+try:
+    os.mkdir(model_folder)
+except OSError:
+    print ("El directorio %s no hay podido ser creado" % (data_path))
+else:
+    print ("El directorio %s ha sido creado correctamente" % (data_path))
+
+
+model_path = './models/'
+model_name = 'model'
+
+model_json = model.to_json()
+
+with open(model_path + model_name + '.json', "w") as json_file:
+    json_file.write(model_json)
+
+model.save_weights(model_path + model_name + ".h5")
+```
+
+Tras la ejecución de este fragmento de código habremos generado nuestro los dos ficheros que describen la estructua de nuestra red de neuronas y los valos de los pesos de las diferentes capas. 
+
+**Paso 13: Carga del modelo y ejecución del proceso de inferencia**
+
+Una vez que hemos almacenado nuestro modelo, podemos cargarlo con el objetivo de poder ejecutar el proceso de inferencia en la aplicación en la cual queremos desplegar el modelo. Para ello tendremos que cargar el modelo que hemos almacenado previamente mediante el siguiente fragmento de código.
+
+```
+json_file = open(model_path + model_name + '.json', 'r')
+#
+loaded_model_json = json_file.read()
+json_file.close()
+
+loaded_model = model_from_json(loaded_model_json)
+loaded_model.load_weights(model_path + model_name + '.h5')
+```
+
+Una vez que hemos cargado el modelo podemos realizar la inferencia sobre el modelo mediante la función __predict__ que nos permite predecir el valor de salida mediante un valor de entrada. Para comprobar si nuestro sistema de predicción funciona correctamente vamos a utilizar el ejemplo con id 786 de nuestro conjunto de test. Para realizar la predicción de este objeto tendremos que incluir el siguiente código. 
+
+
+```
+example_id = 786
+example_x = full_data.test.images[example_id].reshape(1, image_size, image_size, 1)
+prediction = final_model.predict(example_x).flatten()
+```
+
+La predicción consiste en un array de clases donde cada valor se corresponde con un valor entre 0 y 1 de manera que aquella clase cuyo valor esté más cercano a 1, es la clase predecida por nuestro modelo. Si imprimimos el contenido de la variable __prediction__ mediante el siguiente comando:
+
+```
+print(test_predictions)
+
+```
+
+obtendremos un array con 10 valores similar al siguiente. Como se puede observar el valor que tiene un número más cercano a 1 es el 9 valor del array , cuyo valor es __0.99952447__. 
+
+```
+[3.8619366e-04 2.2477027e-12 9.0480347e-07 7.9387841e-10 5.5042769e-08
+ 4.8724256e-09 8.7293542e-05 7.2105127e-10 9.9952447e-01 1.0637536e-06]
+```
+
+Para poder obtener la clase realizando una comparación de los valores del array, se puede utilizar el método __argmax__ de numpy de la siguiente manera. 
+
+```
+print(np.argmax(prediction))
+print(np.argmax(full_data.test.labels[example_id]))
+```
+
+El valor obtenido lo comparamos con el valor que tenemos almacenado en el conjunto de test y forma que deberías obtener el mismo resultado. 
+
+
 **Congratulations Ninja!**
 
 Has aprendido como construir un modelo basado en Machine Learning mediante la utilización de Keras. Has conseguido aprender:
@@ -212,6 +294,8 @@ Has aprendido como construir un modelo basado en Machine Learning mediante la ut
 6. Como definir la función de optimización. 
 7. Como construir el bucle de entrenamiento. 
 8. Como visualizar datos referentes al proceso de entrenamiento mediante TensorBoard. 
+9. Como guardar un modelo para poder utilizarlo en el futuro.
+10. Como cargar un modelo previamente guardado y realizar una predicción. 
 
 <img src="../img/ejercicio_4_congrats.png" alt="Congrats ejercicio 4" width="800"/>
 

@@ -12,7 +12,7 @@ Los notebooks son entidades independientes que permiten la utilización de cualq
 ```
 !sudo apt update
 !sudo apt -y install graphviz
-!pip install pandas scikit-learn numpy seaborn matplotlib numpy tensorflow==1.15 requests keras pydot
+!pip install pandas scikit-learn numpy seaborn matplotlib numpy requests pydot
 ```
 
 Como podemos observar, es necesario incluir el caracter __!__ antes del comando de instalación. A continuación hay que seleccionar el fragmento y pulsar la tecla play para ejecutar el código contenido en el fragmento. Siendo el resultado de la ejecución de esta linea, el siguiente:
