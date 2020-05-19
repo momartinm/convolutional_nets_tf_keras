@@ -64,7 +64,6 @@ En este caso no se ha realizado la instalación de ningún paquete debido a que 
 Una vez que se ha realizado la instalación de los diferentes paquetes python, es necesario importar aquellas clases y métodos necesarios para la realización del ejercicio.
 
 ```
-import input_data
 import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
@@ -76,7 +75,6 @@ import math
 
 Para el desarrollo de los diferentes ejercicios vamos a necesitar un conjunto de liberías que servirán para lo siguiente:
 
-* input_data: Nos ofrece funcionalidad para cargar la información utilizando el formato propuesto por MNist. 
 * numpy: Nos ofrece funcionalidad para la manipulación de arrays y conjunto de datos. 
 * matplotlib: Nos ofrece funcionalidad para la visualización de datos. 
 * tensorflow: Nos ofrece funcionalidad para la construacción de procesos de entrenamiento. 
@@ -129,13 +127,13 @@ A continuación tenemos que cargar los datos en las estructuras de datos básica
 * Datos de entrenamiento/test: Tenemos que cargar los datos e una estructura de datos con el fin de poder utilizarlos. 
 * Clases: Tenemos que definir cuales son las clases con las que están etiquetados los ejemplos de entrenamiento y test. 
 
-Para poder cargar los datos en formato minist tenemos que utilizar las funcionalidades de importación propuesta por el equipo de TensorFlow incluyengo la siguiente librería. 
+Para poder cargar los datos en formato minist tenemos que utilizar las funcionalidades de importación propuesta por el equipo de TensorFlow incluyengo la siguiente librería entre las liberías del paso 2. 
 
 ```
 from tensorflow.examples.tutorials.mnist import input_data
 ```
 
-Pero al realizarlo se produce un error de ejecución, por lo que necesario cargar el código de la libreria y generar un archivo el local que es el que utilizaremos. Para ello es necesario descargar el código de la siguiente [url](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/tutorials/mnist/input_data.py) y crear un archivo denominado __input_data.py__. Una vez descargado este archivo podemos realizar la carga de datos. Para ellos ejecutaremos la función __read_data_sets__ que nos permite cargar dataset desde una url, utilizando las siguiente opciones:
+Pero al realizarlo se produce un error de ejecución, por lo que necesario eliminar esta librerías y cargar el código directamente generando un archivo local que es el que utilizaremos. Para ello es necesario descargar el código de la siguiente [url](./resources/exercise_4/input_data.py) y crear un archivo denominado __input_data.py__. Una vez descargado este archivo podemos realizar la carga de datos. Para ellos ejecutaremos la función __read_data_sets__ que nos permite cargar dataset desde una url, utilizando las siguiente opciones:
 
 - Nombre del dataset
 - source_url: Se corresponde con la url donde estará almacenada la información. 
@@ -164,7 +162,7 @@ LABELS = {
 }
 ```
 
-**Paso 4: Análisis de datos**
+**Paso 5: Análisis de datos**
 
 Una vez que hemos cargado los datos, tenemos que analizar los datos para entender su estructura, formato, si tenemos disponibles los suficientes conjuntos de entrenamiento, etc. Para ellos vamos a analizar algunas caracteristicas de los datos. Primero comprobaremos el tamaño (shape) de los conjuntos de datos que vamos a utilizar:
 
@@ -207,7 +205,7 @@ for label in full_data.test.labels:
 print(test_labels)
 ```
 
-**Paso 5: Visualización de los datos**
+**Paso 6: Visualización de los datos**
 
 Por último vamos a crear una función para visualizar las imágenes con las que estamos trabajando con el objetivo de ver el tipo de imágenes que estamos utilizando. La función se denominará __plot_image__ y nos permitirá visualizar imágenes con su etiqueta y utilizará 5 parámetros de entrada:
 
@@ -224,6 +222,24 @@ def plot_image(plt, data, label, size, location):
     label = np.argmax(label)
     plt.imshow(img)
     plt.title("(Label: " + str(LABELS[label]) + ")")
+```
+
+Una vez que hemos generado la función para imprimir nuestro ejemplos y etiquetas (labels) podemos utilizarla para mostrar algunos de nuestros ejemplos mediante el siguiente fragmento de código:
+
+```
+plt.figure(figsize=[18,18])
+
+plot_image(plt, 
+           full_data.train.images[4], 
+           full_data.train.labels[4,:], 
+           (image_size, image_size),
+           121)
+
+plot_image(plt, 
+           full_data.test.images[95], 
+           full_data.test.labels[95,:], 
+           (image_size, image_size),
+           122)
 ```
 
 **Congratulations Ninja!**
