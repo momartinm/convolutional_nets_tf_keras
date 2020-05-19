@@ -255,13 +255,14 @@ Una vez que hemos cargado el modelo podemos realizar la inferencia sobre el mode
 ```
 example_id = 786
 example_x = full_data.test.images[example_id].reshape(1, image_size, image_size, 1)
-prediction = final_model.predict(example_x).flatten()
+prediction = loaded_model.predict(example_x).flatten()
 ```
 
 La predicción consiste en un array de clases donde cada valor se corresponde con un valor entre 0 y 1 de manera que aquella clase cuyo valor esté más cercano a 1, es la clase predecida por nuestro modelo. Si imprimimos el contenido de la variable __prediction__ mediante el siguiente comando:
 
+
 ```
-print(test_predictions)
+print(predictions)
 
 ```
 
@@ -279,7 +280,7 @@ print(np.argmax(prediction))
 print(np.argmax(full_data.test.labels[example_id]))
 ```
 
-El valor obtenido lo comparamos con el valor que tenemos almacenado en el conjunto de test y forma que deberías obtener el mismo resultado. 
+El valor obtenido lo comparamos con el valor que tenemos almacenado en el conjunto de test, de forma que deberías obtener el mismo resultado. 
 
 
 **Congratulations Ninja!**
