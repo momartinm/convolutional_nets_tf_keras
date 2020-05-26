@@ -103,6 +103,8 @@ urls = ['http://fashion-mnist.s3-website.eu-central-1.amazonaws.com/train-images
          'http://fashion-mnist.s3-website.eu-central-1.amazonaws.com/t10k-labels-idx1-ubyte.gz']
 ```
 
+Una vez que hayamos definidos las localizaciones de nuestro ficheros de ejemplos (entrenamiento y test) podemos crear un directorio para almacenarlos y descargalos. Para ellos incluiremos el siguiente código. 
+
 ```
 data_path = "data"
 
@@ -113,6 +115,10 @@ except OSError:
 else:
     print ("El directorio %s ha sido creado correctamente" % (data_path))
 
+```
+Una vez hayamos creado el directorio __data__ podemos proceder a descargar todos los elementos disponibles en el array __urls__ mediante el siguiente fragmento de código. 
+
+```
 for url in urls:
     save_path = os.path.join("data", url.split('/')[-1])
     r = requests.get(url, stream=True)
