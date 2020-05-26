@@ -103,6 +103,26 @@ urls = ['http://fashion-mnist.s3-website.eu-central-1.amazonaws.com/train-images
          'http://fashion-mnist.s3-website.eu-central-1.amazonaws.com/t10k-labels-idx1-ubyte.gz']
 ```
 
+```
+data_path = "data"
+
+try:
+    os.mkdir(data_path)
+except OSError:
+    print ("El directorio %s no hay podido ser creado" % (data_path))
+else:
+    print ("El directorio %s ha sido creado correctamente" % (data_path))
+
+for url in urls:
+    save_path = os.path.join("data", url.split('/')[-1])
+    r = requests.get(url, stream=True)
+    with open(save_path, 'wb') as fd:
+        for chunk in r.iter_content(chunk_size=128):
+            fd.write(chunk)
+        print ("Fichero %s ha sido descargado correctamente" % (save_path))
+```
+
+
 **Paso 4: Definición de clases y datos**
 
 A continuación tenemos que cargar los datos en las estructuras de datos básicas para comenzar a trabajar con ellos. Por lo que necesitaremos dos conjuntos de datos:
