@@ -117,7 +117,7 @@ Para poder cargar los datos en formato minist tenemos que utilizar las funcional
 - one_hot:  Realiza una transformación sobre las variables categorizadas a una codificación binaria. Es decir si tenemos n valores para una variables categorica se crearan n features binarias (0,1) de forma que sólo una de ellas tendrá el valor 1 correspondiendose con uno de los valores de la variable categorica. En este ejercicio, se utiliza para convertar la caraterística label (Clase de salida) en una coficiación binaria. 
 
 ```
-full_data = data = input_data.read_data_sets('data', one_hot=True)
+full_data = input_data.read_data_sets('data', one_hot=True)
 
 # Condificación one hot para un ejemplo de tipo Dress
 # 3 => [0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
