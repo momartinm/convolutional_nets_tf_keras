@@ -71,22 +71,30 @@ import os
 import os.path
 import requests 
 import math
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
 ```
 
 Para el desarrollo de los diferentes ejercicios vamos a necesitar un conjunto de liberías que servirán para lo siguiente:
 
-* numpy: Nos ofrece funcionalidad para la manipulación de arrays y conjunto de datos. 
-* matplotlib: Nos ofrece funcionalidad para la visualización de datos. 
-* tensorflow: Nos ofrece funcionalidad para la construacción de procesos de entrenamiento. 
-* os: Nos ofrece funcionalidad para la manipulación de recursos del sistema operativo. 
-* os: Nos ofrece funcionalidad para la manipulación del sistema de ficheros del sistema operativo.
-* requests: Nos ofrece funcionalidad para la descarga de archivos.
-* math: Nos ofrece funcionalidad para la realización de operaciones matemáticas complejos (no elementales).
+* numpy: Nos ofrece funciones para la manipulación de arrays y conjunto de datos. 
+* matplotlib: Nos ofrece funciones para la visualización de datos. 
+* tensorflow: Nos ofrece funciones para la construacción de procesos de entrenamiento. 
+* os: Nos ofrece funciones para la manipulación de recursos del sistema operativo. 
+* os: Nos ofrece funciones para la manipulación del sistema de ficheros del sistema operativo.
+* requests: Nos ofrece funciones para la descarga de archivos de localizaciones remotas.
+* math: Nos ofrece funciones para la realización de operaciones matemáticas complejas (no elementales).
 
+Además, vamos a incluir algunas variables de entorno:
+
+* TF_CPP_MIN_LOG_LEVEL para definir el nivel de visualización de los mensajes del framework TensorFlow. Existen 4 niveles de visualización incrementales: (I) 0 para mostrar todos los mejores; (II) 1 para filtrar los mensajes de tipo INFO; (III) 2 para filtrar los mensajes de tipo WARN; (3) 3 para filtrar los mensajes de tipo ERROR. 
+* CUDA_VISIBLE_DEVICES para indicar que los dispositivos de tipo CUDA no sean visibles. 
 
 **Paso 3: Descarga de datos**
 
-A continuación vamos a realizar la carga de datos. En primer lugar, tenemos que definir las urls donde se encuentran los datasets para el proceso de entrenamiento. Para este ejercicio vamos a utilizar los datos contenidos en el dataset de [Zalando sobre ropa](https://github.com/zalandoresearch/fashion-mnist). 
+A continuación vamos a realizar la carga de datos. En primer lugar, tenemos que definir las urls donde se encuentran los datasets para el proceso de entrenamiento y test. Para este ejercicio vamos a utilizar los datos contenidos en el dataset de [Zalando sobre ropa](https://github.com/zalandoresearch/fashion-mnist). 
 
 ```
 urls = ['http://fashion-mnist.s3-website.eu-central-1.amazonaws.com/train-images-idx3-ubyte.gz',
@@ -95,53 +103,21 @@ urls = ['http://fashion-mnist.s3-website.eu-central-1.amazonaws.com/train-images
          'http://fashion-mnist.s3-website.eu-central-1.amazonaws.com/t10k-labels-idx1-ubyte.gz']
 ```
 
-Una vez hemos definido un array con todas las urls, vamos a comenzar el proceso de descarga. Para ello crearemos un directorio de tipo __data__ mediante el siguiente fragmento de código:
-
-```
-data_path = "data"
-
-try:
-    os.mkdir(data_path)
-except OSError:
-    print ("El directorio %s no ha podido ser creado correctamente" % (data_path))
-else:
-    print ("El directorio %s no sido creado correctamente" % (data_path))
-```
-
-A continuación generamos el proceso de descarga de la información para cada una de las urls. 
-
-```
-for url in urls:
-    save_path = os.path.join("data", url.split('/')[-1])
-    r = requests.get(url, stream=True)
-    with open(save_path, 'wb') as fd:
-        for chunk in r.iter_content(chunk_size=128):
-            fd.write(chunk)
-        print ("Fichero %s ha sido descargado correctamente" % (save_path))
-```
-
 **Paso 4: Definición de clases y datos**
 
 A continuación tenemos que cargar los datos en las estructuras de datos básicas para comenzar a trabajar con ellos. Por lo que necesitaremos dos conjuntos de datos:
 
-* Datos de entrenamiento/test: Tenemos que cargar los datos e una estructura de datos con el fin de poder utilizarlos. 
-* Clases: Tenemos que definir cuales son las clases con las que están etiquetados los ejemplos de entrenamiento y test. 
+* Ejemplos (entrenamiento/validacion/test): Conjunto de ejemplos de información (imágenes) para los procesos de entrenamiento, validación y test.
+* Labels (clases): Conjunto de clases asignadas a cada una de las imágenes de los diferentes conjuntos. Cada conjunto tendrá un conjunto de labels del mismo tamaño. 
 
-Para poder cargar los datos en formato minist tenemos que utilizar las funcionalidades de importación propuesta por el equipo de TensorFlow incluyengo la siguiente librería entre las liberías del paso 2. 
-
-```
-from tensorflow.examples.tutorials.mnist import input_data
-```
-
-Pero al realizarlo se produce un error de ejecución, por lo que necesario eliminar esta librerías y cargar el código directamente generando un archivo local que es el que utilizaremos. Para ello es necesario descargar el código de la siguiente [url](./resources/exercise_4/input_data.py) y crear un archivo denominado __input_data.py__. Una vez descargado este archivo podemos realizar la carga de datos. Para ellos ejecutaremos la función __read_data_sets__ que nos permite cargar dataset desde una url, utilizando las siguiente opciones:
+Para poder cargar los datos en formato minist tenemos que utilizar las funcionalidades de importación propuesta por el equipo de TensorFlow (version 2016). Para ello debemos cargar el código de las funciones de cargar mediante la inclusión de un archivo local que denominaremos __input_data.py__. El código fuente de este archivo, se puede descargar en la siguiente [url](./resources/exercise_4/input_data.py). Una vez incluido este archivo podemos realizar la carga de datos. Para ellos utilizaremos la función __read_data_sets__ que nos permite cargar dataset desde una url, utilizando las siguiente opciones:
 
 - Nombre del dataset
 - source_url: Se corresponde con la url donde estará almacenada la información. 
 - one_hot:  Realiza una transformación sobre las variables categorizadas a una codificación binaria. Es decir si tenemos n valores para una variables categorica se crearan n features binarias (0,1) de forma que sólo una de ellas tendrá el valor 1 correspondiendose con uno de los valores de la variable categorica. En este ejercicio, se utiliza para convertar la caraterística label (Clase de salida) en una coficiación binaria. 
 
 ```
-full_data = data = input_data.read_data_sets('data',
-                                             one_hot=True)
+full_data = data = input_data.read_data_sets('data', one_hot=True)
 
 # Condificación one hot para un ejemplo de tipo Dress
 # 3 => [0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
@@ -149,16 +125,16 @@ full_data = data = input_data.read_data_sets('data',
 
 
 LABELS = {
- 0: 'T-shirt/top',
- 1: 'Trouser',
- 2: 'Pullover',
- 3: 'Dress',
- 4: 'Coat',
- 5: 'Sandal',
- 6: 'Shirt',
- 7: 'Sneaker',
- 8: 'Bag',
- 9: 'Ankle boot',
+ 0: 'Camiseta/top',
+ 1: 'Pantalones',
+ 2: 'Sudadera',
+ 3: 'Vestido',
+ 4: 'Abrigo/Gabardina',
+ 5: 'Sandalias/Zapato',
+ 6: 'Camisa',
+ 7: 'Zapatillas',
+ 8: 'Bolso/Bolsa',
+ 9: 'Botas',
 }
 ```
 
@@ -224,7 +200,7 @@ def plot_image(plt, data, label, size, location):
     plt.title("(Label: " + str(LABELS[label]) + ")")
 ```
 
-Una vez que hemos generado la función para imprimir nuestro ejemplos y etiquetas (labels) podemos utilizarla para mostrar algunos de nuestros ejemplos mediante el siguiente fragmento de código:
+Una vez que hemos generado la función para visualizar la estructura de los ejemplos y las etiquetas (labels) podemos utilizarla para mostrar algunos de nuestros ejemplos mediante el siguiente fragmento de código:
 
 ```
 plt.figure(figsize=[18,18])

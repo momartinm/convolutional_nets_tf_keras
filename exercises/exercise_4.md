@@ -10,10 +10,10 @@ El objetivo de este ejercicio es construir nuestra red de neuronas convolucional
 En este primer paso hay que incluir los paquetes que deben ser instalados con el objetivo de utilizar keras y TensorFlow Board. Para ello es necesario incluir el siguiente código al inicio del cuaderno. 
 
 ```
-!pip install pandas scikit-learn numpy seaborn matplotlib numpy tensorflow==1.15 h5py keras
+!pip install pandas scikit-learn numpy seaborn matplotlib numpy h5py keras
 ```
 
-Este comando permite cargar la extensión de TensorFlow Board dentro de los cuadernos juputer, de forma que se despligue de manera embebida. 
+A continuación vamos a incluir un comando que permite cargar la extensión de TensorFlow Board dentro de los cuadernos de tipo Jupyter, de forma que se despligue de manera embebida en el entorno. 
 
 ```
 %load_ext tensorboard
@@ -43,24 +43,32 @@ from keras.layers import Dense, Conv2D, Flatten, MaxPooling2D, Dropout
 from keras import optimizers
 from keras.utils import plot_model
 from keras.models import model_from_json
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 ```
 
 Para el desarrollo de los diferentes ejercicios vamos a necesitar un conjunto de liberías que servirán para lo siguiente:
 
-* input_data: Nos ofrece funcionalidad para cargar la información utilizando el formato propuesto por MNist. 
-* numpy: Nos ofrece funcionalidad para la manipulación de arrays y conjunto de datos. 
-* matplotlib: Nos ofrece funcionalidad para la visualización de datos. 
-* tensorflow: Nos ofrece funcionalidad para la construacción de procesos de entrenamiento. 
-* os: Nos ofrece funcionalidad para la manipulación de recursos del sistema operativo. 
-* os.path: Nos ofrece funcionalidad para la manipulación del sistema de ficheros del sistema operativo.
-* requests: Nos ofrece funcionalidad para la descarga de archivos.
-* math: Nos ofrece funcionalidad para la realización de operaciones matemáticas complejos (no elementales).
-* time: Nos ofrece funcionalidad para la obtención de information referente al tiempo, para crear contadores o archivos de log. 
-* Keras.model: Nos ofrece diferente tipo de modelos, en este caso vamos a utilizar el modelo secuencial. 
-* Keras.layers: Nos ofrece diferentes tipo de capas para incluir en una red de neuronas.
-* optimizers from keras: Nos ofrece diferentes tipos de algoritmos de optimización, en nuestro caso utilizaremos el optimizador de Adams. 
-* Keras.utils: Nos ofrece diferentes funcionalidades para obtener información de la red construida. 
-* TensorBoard: Nos ofrece diferentes funcionalidades para cargar información en tensorborad y poder visualizar la evoluación de nuestros algoritmos. 
+* input_data: Nos ofrece funciones para cargar la información utilizando el formato propuesto por MNist. 
+* numpy: Nos ofrece funciones para la manipulación de arrays y conjunto de datos. 
+* matplotlib: Nos ofrece funciones para la visualización de datos. 
+* tensorflow: Nos ofrece funciones para la construacción de procesos de entrenamiento. 
+* os: Nos ofrece funciones para la manipulación de recursos del sistema operativo. 
+* os.path: Nos ofrece funciones para la manipulación del sistema de ficheros del sistema operativo.
+* requests: Nos ofrece funciones para la descarga de archivos.
+* math: Nos ofrece funciones para la realización de operaciones matemáticas complejos (no elementales).
+* time: Nos ofrece funciones para la obtención de information referente al tiempo, para crear contadores o archivos de log. 
+* Keras.model: Nos permite utilizar diferentes tipo de modelos, en este caso vamos a utilizar el modelo secuencial. 
+* Keras.layers: Nos permite utilizar diferentes tipo de capas para incluir en una red de neuronas.
+* optimizers from keras: Nos permite utilizar diferentes tipos de algoritmos de optimización, en nuestro caso utilizaremos el optimizador de Adams. 
+* Keras.utils: Nos ofrece diferentes funciones para obtener información de la red construida. 
+* TensorBoard: Nos ofrece diferentes funciones para cargar información en tensorborad y poder visualizar la evoluación de nuestros algoritmos. 
+
+Además, vamos a incluir algunas variables de entorno:
+
+* TF_CPP_MIN_LOG_LEVEL para definir el nivel de visualización de los mensajes del framework TensorFlow. Existen 4 niveles de visualización incrementales: (I) 0 para mostrar todos los mejores; (II) 1 para filtrar los mensajes de tipo INFO; (III) 2 para filtrar los mensajes de tipo WARN; (3) 3 para filtrar los mensajes de tipo ERROR. 
+* CUDA_VISIBLE_DEVICES para indicar que los dispositivos de tipo CUDA no sean visibles. 
 
 
 **Paso 3. Definición de conjuntos de entrenamiento y test para el proceso de entrenamiento**
@@ -88,7 +96,7 @@ Para la construcción de la red de neuronas vamos a definir una serie de variabl
 TensorFlow es una framework que transforma el código fuente en grafo de operaciones que pueden ser ejecutadas de forma secuencial o paralela dependiendo de sus interacciones. Con el objetivo de eliminar cualquier tipo de información previo tenemos que resetear el grafo por defecto. 
 
 ```
-tf.reset_default_graph()
+tf.compat.v1.reset_default_graph()
 ```
 
 **Paso 5. Inicialización de placeHolders**
@@ -98,8 +106,8 @@ Una vez que hemos definido la función de generación, podemos construir nuestra
 - placeholder: Son las variables de entrada (inputs) y salida (output) del algoritmo. Se generan mediante el método __tf.placeholder__ y se utilizan para definir el grafo de tensorflow sin la necesidad de haberles asignado un valor inicial. 
 
 ```
-x = tf.placeholder("float", [None, n_input])
-y = tf.placeholder("float", [None, n_output])
+x = tf.Variable("float", [None, n_input])
+y = tf.Variable("float", [None, n_output])
 ```
 
 **Paso 6. Generación de la red**
@@ -108,9 +116,9 @@ Una vez definadas la variables de entrada y salida con su formato (shape) podemo
 
 - Capa convolucional 1: Capa convolucional que aplica un filtro convolucional de 3 x 3, pooling de 2 x 2 con una función de activación ReLU con entrada de 28 neuronas y salida de 32 neuronas. 
 - Capa convolucional 2: Capa convolucional que aplica un filtro convolucional de 3 x 3, pooling de 2 x 2 con una función de activación ReLU con entrada de 32 neuronas y salida de 64 neuronas. 
-- Capa fully connected: Capa de tipo flaten que aplana la información en un array. Se suele utilizar como capa inicial para aplanar la imagen de entrada que se corresponde con una matriz y transformarla en un secuencia de píxeles.
-- Capa salida: Capa de salida densa con entrada de 1600 neuronas y salida de 10 neuronas (labels). 
-
+- Capa Dropout: Capa especial para evitar el proceso de sobre-aprendizaje (overfitting). Esta capa desactiva algunas de las conexiones de la red con el objetivo de aumentar la variabilidad durante el proceso de aprendizaje. 
+- Capa flatten: Capa de transformación lineal entre dos capas. Se utilizar para "aplanar" la imagen (2D) de entrada que se corresponde con una matriz de píxeles y transformarla en un secuencia de píxeles (1D).
+- Capa Fully Connected (Dense): Es la capa básica de una red de neuronas convencionales donde cada neurona de la capa está conectada con todas las neuronas de la capa anterior, de este modelo de conexión proviene su nombre __fully connected__. 
 ```
 net = Sequential(name="KerasCNN")
 net.add(Conv2D(32, kernel_size=3, activation='relu', input_shape=(28,28,1)))
@@ -241,7 +249,7 @@ Una vez que hemos almacenado nuestro modelo, podemos cargarlo con el objetivo de
 
 ```
 json_file = open(model_path + model_name + '.json', 'r')
-#
+
 loaded_model_json = json_file.read()
 json_file.close()
 
@@ -262,7 +270,7 @@ La predicción consiste en un array de clases donde cada valor se corresponde co
 
 
 ```
-print(predictions)
+print(prediction)
 
 ```
 

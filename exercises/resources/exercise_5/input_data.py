@@ -44,7 +44,6 @@ def _read32(bytestream):
   return numpy.frombuffer(bytestream.read(4), dtype=dt)[0]
 
 
-@deprecated(None, 'Please use tf.data to implement this functionality.')
 def _extract_images(f):
   """Extract the images into a 4D uint8 numpy array [index, y, x, depth].
   Args:
@@ -69,7 +68,6 @@ def _extract_images(f):
     return data
 
 
-@deprecated(None, 'Please use tf.one_hot on tensors.')
 def _dense_to_one_hot(labels_dense, num_classes):
   """Convert class labels from scalars to one-hot vectors."""
   num_labels = labels_dense.shape[0]
@@ -79,7 +77,6 @@ def _dense_to_one_hot(labels_dense, num_classes):
   return labels_one_hot
 
 
-@deprecated(None, 'Please use tf.data to implement this functionality.')
 def _extract_labels(f, one_hot=False, num_classes=10):
   """Extract the labels into a 1D uint8 numpy array [index].
   Args:
@@ -106,12 +103,7 @@ def _extract_labels(f, one_hot=False, num_classes=10):
 
 
 class _DataSet(object):
-  """Container class for a _DataSet (deprecated).
-  THIS CLASS IS DEPRECATED.
-  """
 
-  @deprecated(None, 'Please use alternatives such as official/mnist/_DataSet.py'
-              ' from tensorflow/models.')
   def __init__(self,
                images,
                labels,
@@ -227,7 +219,6 @@ class _DataSet(object):
       return self._images[start:end], self._labels[start:end]
 
 
-@deprecated(None, 'Please write your own downloading logic.')
 def _maybe_download(filename, work_directory, source_url):
   """Download the data from source url, unless it's already here.
   Args:
@@ -248,8 +239,6 @@ def _maybe_download(filename, work_directory, source_url):
   return filepath
 
 
-@deprecated(None, 'Please use alternatives such as:'
-            ' tensorflow_datasets.load(\'mnist\')')
 def read_data_sets(train_dir,
                    fake_data=False,
                    one_hot=False,

@@ -11,7 +11,7 @@ El objetivo de este ejercicio es construir nuestra red de neuronas convolucional
 En este primer paso hay que incluir los paquetes que deben ser instalados con el objetivo de utilizar keras y TensorFlow Board. Para ello es necesario incluir el siguiente código al inicio del cuaderno. 
 
 ```
-!pip install pandas scikit-learn numpy seaborn matplotlib numpy tensorflow==1.15 requests
+!pip install pandas scikit-learn numpy seaborn matplotlib numpy requests
 ```
 
 Este comando permite cargar la extensión de TensorFlow Board. 
