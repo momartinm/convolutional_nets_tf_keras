@@ -133,7 +133,7 @@ net.add(Dense(1024, activation='relu'))
 net.add(Dense(10, activation='softmax'))
 ```
 
-<img src="../img/neurons_1.png" alt="Estructura de la red de neuronas" width="800"/>
+<img src="../img/example_neural_network.png" alt="Estructura de la red de neuronas" width="800"/>
 
 
 **Paso 7. Definición de función de optimización**
