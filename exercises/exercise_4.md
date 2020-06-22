@@ -103,7 +103,7 @@ tf.compat.v1.reset_default_graph()
 
 Una vez que hemos definido la función de generación, podemos construir nuestra red de neuronas y definir las variables necesarias para el proceso de aprendiaje.  En este caso utilizaremos sólo los placeholders de tensorflow:
 
-- placeholder: Son las variables de entrada (inputs) y salida (output) del algoritmo. Se generan mediante el método __tf.placeholder__ y se utilizan para definir el grafo de tensorflow sin la necesidad de haberles asignado un valor inicial. 
+- Variable de entrada (antiguos placeholders): Son las variables de entrada (inputs) y salida (output) del algoritmo. En las versiones anteriores de tf se generan mediante la clase __tf.Placeholder__ y se utilizan para definir el grafo de tensorflow sin la necesidad de haberles asignado un valor inicial. Pero en la nueva versión se definen de forma general como variables mediante la clase __tf.Variable__. 
 
 ```
 x = tf.Variable("float", [None, n_input])
