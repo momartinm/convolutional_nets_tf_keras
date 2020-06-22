@@ -118,7 +118,9 @@ Una vez definadas la variables de entrada y salida con su formato (shape) podemo
 - Capa convolucional 2: Capa convolucional que aplica un filtro convolucional de 3 x 3, pooling de 2 x 2 con una función de activación ReLU con entrada de 32 neuronas y salida de 64 neuronas. 
 - Capa Dropout: Capa especial para evitar el proceso de sobre-aprendizaje (overfitting). Esta capa desactiva algunas de las conexiones de la red con el objetivo de aumentar la variabilidad durante el proceso de aprendizaje. 
 - Capa flatten: Capa de transformación lineal entre dos capas. Se utilizar para "aplanar" la imagen (2D) de entrada que se corresponde con una matriz de píxeles y transformarla en un secuencia de píxeles (1D).
-- Capa Fully Connected (Dense): Es la capa básica de una red de neuronas convencionales donde cada neurona de la capa está conectada con todas las neuronas de la capa anterior, de este modelo de conexión proviene su nombre __fully connected__. 
+- Capa Fully Connected (Dense): Es la capa básica de una red de neuronas convencionales donde cada neurona de la capa está conectada con todas las neuronas de la capa anterior, de este modelo de conexión proviene su nombre __fully connected__. En este caso creamos una capa completamente connectada con 1024 neuronas tras el aplanamiento de los datos.  
+- Capa Fully Connected de salida (Dense): Es la capa básica de una red de neuronas convencionales donde cada neurona de la capa está conectada con todas las neuronas de la capa anterior, de este modelo de conexión proviene su nombre __fully connected__. En esta caso creamos una capa de tipo densa donde el número de neuronas de salida será 10, que se corresponderá con el número de etiquetas entre las cuales queremos clasificar nuestro objetos. 
+
 ```
 net = Sequential(name="KerasCNN")
 net.add(Conv2D(32, kernel_size=3, activation='relu', input_shape=(28,28,1)))
@@ -127,6 +129,7 @@ net.add(Conv2D(64, kernel_size=3, activation='relu'))
 net.add(MaxPooling2D(pool_size=2))
 net.add(Dropout(0.2))
 net.add(Flatten())
+net.add(Dense(1024, activation='relu'))
 net.add(Dense(10, activation='softmax'))
 ```
 
@@ -159,9 +162,9 @@ Una vez que se han definido todas las variables y funciones necesarias para el p
 - net: Que se corresponde con la red secuencial que hemos definido previamente.
 - training_iters: Que se corresponde con el número de iteraciones del proceso de entrenamiento.
 - batch_size: Que se corresponde con el tamaño de los conjuntos de entrenamiento que se utilizarán. 
+- validation_split: Que se corresponde con el tamaño del cojunto de validación. Es decir, el conjunto de entrada (x_shaped_array) se divirá en dos conjunto: (1) el conjunto de entrenamiento que contendrá el 90% de los ejemplos; y (2) el conjunto de validación que contendrá el 10% de los ejemplos. El primero ser utilizada para cada iteración de entrenamiento, mientras que el segundo será utilizado para validar el modelo después de cada iteración. 
 
-
-Esta función realiza una reestructuración de los datos de los conjuntos de entrenamiento y test para ajustarlos al formato y tamaño de las imágenes que hemos definido en caso de que existe alguna discrepancia y ejecuta el proceso de entrenamiento mediante la utilización del método __fit__ que ejecuta un proceso similar al que definimos en el ejercicio anterior. Además en este caso incluimos un __callback__ con el objetio de recolectar información que nos permita visualizar la evolución del proceso de entrenamiento mediante TensorBoard. 
+Esta función realiza una reestructuración de los datos de los conjuntos de entrenamiento y test para ajustarlos al formato y tamaño de las imágenes que hemos definido en caso de que existe alguna discrepancia y ejecuta el proceso de entrenamiento mediante la utilización del método __fit__ que ejecuta un proceso similar al que definimos en el ejercicio anterior. Además en este caso incluimos un __callback__ con el objeto de recolectar información que nos permita visualizar la evolución del proceso de entrenamiento mediante TensorBoard. 
 
 ```
 logdir = "./logs/scalars/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -179,12 +182,18 @@ def train(net, training_iters, batch_size = 128):
       train_y,
       batch_size=batch_size,
       epochs=training_iters,
-      validation_data=(x_test_shaped_array, test_y),
+      validation_split=0.1,
       callbacks=[tensorboard_callback]
     )
     
+    test_results = net.evaluate(x_test_shaped_array, test_y, batch_size=batch_size,)
+    
+    print("test loss, test acc:", test_results)
+    
     return net
 ```
+
+Además tras el proceso de entrenamiento podemos calcular el resultado de nuestro modelo sobre el conjunto de test con el objetivo de conocer la capacidad real de nuestro modelo. Para ello utilizaremos la función __evaluate__ que como como parámetros obligatorios son el conjunto de características (x_test_shaped_array) y el de etiquetas (test_y). Además vamos a incluir el mismo tamaño de bacth que utilizamos en el proceso de entrenamiento. 
 
 **Paso 10. Ejecución del proceso de entrenamiento**
 
