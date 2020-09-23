@@ -118,7 +118,7 @@ Docker version 19.03.5, build 633a0ea838
 ```
 
 #### Instalación en Linux (Ubuntu)
-
+Mac
 Para realizar la instalación sobre Ubuntu es necesario seguir los siguientes pasos:
 
 **Paso 1: Desintalación de versiones anteriores (opcional)**
@@ -131,7 +131,7 @@ $ sudo apt-get remove docker docker-engine docker.io containerd runc
 
 **Paso 2: Instalación de docker mediante apt-get**
 
-A continuación podemos realizar una instalación limpia de docker. Para ello vamos a utilizar la versión del repositorio de ubuntu, aunque si lo deseas puede utilizar el repositorio oficial de docker siguiente las instrucciones de su [página web](https://docs.docker.com/engine/install/ubuntu/). 
+A continuación, podemos realizar una instalación limpia de docker. Para ello vamos a utilizar la versión del repositorio de ubuntu, aunque si lo deseas puede utilizar el repositorio oficial de docker siguiente las instrucciones de su [página web](https://docs.docker.com/engine/install/ubuntu/). 
 
 
 1. Instalación de paquetes básicos para permitir la utilización de paquetes apt sobre HTTPS.
@@ -187,7 +187,7 @@ En primer lugar es necesario descarga la versión disponibles para Mac en el sig
 
 1. Hacer doble click sobre el archivo Docker.dmg para comenzar con el proceso de instalación. 
 
-2. A continuación tienes que mover el icono de docker al directorio de aplicaciones como se muestra en la siguiente figura.
+2. A continuación, tienes que mover el icono de docker al directorio de aplicaciones como se muestra en la siguiente figura.
 
 <img src="../img/docker-mac-1.png" alt="Instalación de docker en Mac 1" width="800"/>
 
@@ -199,19 +199,21 @@ En primer lugar es necesario descarga la versión disponibles para Mac en el sig
 
 <img src="../img/docker-mac-3.png" alt="Instalación de docker en Mac 3" width="160"/>
 
-5. Si todo ha ido bien tras la instalación podrás utilizar el comando para obtener la versión de docker. Estamos listos para poder empezar con el taller. 
+5. Si todo ha ido bien tras la instalación podrás utilizar el comando para obtener la versión de docker como se indica a continuación. 
 
 ```
 $ docker --version
 ```
 
+6. Si todo ha ido bien, ya estamos listos para poder empezar con el taller. 
+
 #### Instalación en Windows
 
-Para realizar la instalación sobre Mac es necesario seguir los siguientes pasos:
+Para realizar la instalación sobre Windows es necesario seguir los siguientes pasos:
 
 **Paso 1: Descarga de Docker Desktop**
 
-En primer lugar es necesario descarga la versión disponibles para Mac en el siguiente [enlace](https://hub.docker.com/editions/community/docker-ce-desktop-windows/). Debes elegir la versión que se adapte a tu sistema operativo. 
+En primer lugar es necesario descarga la versión disponibles para Windows en el siguiente [enlace](https://hub.docker.com/editions/community/docker-ce-desktop-windows/). Debes elegir la versión que se adapte a tu sistema operativo. 
 
 **Paso 2: Instalación de Docker Desktop**
 
@@ -225,15 +227,18 @@ En primer lugar es necesario descarga la versión disponibles para Mac en el sig
 
 <img src="../img/docker-win-1.png" alt="Instalación de docker en Windows 1" width="320"/>
 
-5. Si la aplicación ha podido ejecutarse correctamente deberá aparecer el icono de docker en la barra inferior derecha de tu escritorio. Este icono indica que Docker Desktop está ejecutandose y puedes utilizarlo en tu terminal. 
+5. Si la aplicación ha podido ejecutarse correctamente deberá aparecer el icono de docker (Ballena) en la barra inferior derecha de tu escritorio. Este icono indica que Docker Desktop está ejecutandose y puedes utilizarlo en tu terminal. 
 
 <img src="../img/docker-win-2.png" alt="Instalación de docker en Windows 2" width="160"/>
 
-5. Si todo ha ido bien tras la instalación podrás utilizar el comando para obtener la versión de docker. Estamos listos para poder empezar con el taller. 
+
+5. Si todo ha ido bien tras la instalación podrás utilizar el comando para obtener la versión de docker como se indica a continuación. 
 
 ```
 $ docker --version
 ```
+
+6. Si todo ha ido bien, ya estamos listos para poder empezar con el taller. 
 
 ### Recursos
 
