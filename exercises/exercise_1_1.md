@@ -105,7 +105,7 @@ $ docker volume rm <nombre_volumen>
 
 ### Instalación
 
-Para poder utilizar docker es necesario instalarlo previamente. En algunas ocasiones este se instala de forma conjunta con algunas aplicaciones por lo que es posible que se encuentre en tu sistema operativo. Para poder comprobar si docker se encuentra en tu sistema debes abrir un terminal o interfaz de comando y ejecutar el siguiente comando:
+Para poder utilizar Docker es necesario instalarlo previamente. En algunas ocasiones este se instala de forma conjunta con algunas aplicaciones por lo que es posible que se encuentre en tu sistema operativo. Para poder comprobar si Docker se encuentra en tu sistema debes abrir un terminal o interfaz de comando y ejecutar el siguiente comando:
 
 ```
 $ docker --version
@@ -123,15 +123,15 @@ Para realizar la instalación sobre Ubuntu es necesario seguir los siguientes pa
 
 **Paso 1: Desintalación de versiones anteriores (opcional)**
 
-Se recomienda instalar la última versión estable de docker, por lo que si tu versión es inferior a la 19.03 o tu versión se corresponde con docker.io o docker-engine deberías eliminar la versión que tienes instalada e instalar una nueva versión. Para ello deberás utilizar el siguiente comando:
+Se recomienda instalar la última versión estable de Docker, por lo que si tu versión es inferior a la 19.03 o tu versión se corresponde con docker.io o docker-engine deberías eliminar la versión que tienes instalada e instalar una nueva versión. Para ello deberás utilizar el siguiente comando:
 
 ```
 $ sudo apt-get remove docker docker-engine docker.io containerd runc
 ```
 
-**Paso 2: Instalación de docker mediante apt-get**
+**Paso 2: Instalación de Docker mediante apt-get**
 
-A continuación, podemos realizar una instalación limpia de docker. Para ello vamos a utilizar la versión del repositorio de ubuntu, aunque si lo deseas puede utilizar el repositorio oficial de docker siguiente las instrucciones de su [página web](https://docs.docker.com/engine/install/ubuntu/). 
+A continuación, podemos realizar una instalación limpia de Docker. Para ello vamos a utilizar la versión del repositorio de ubuntu, aunque si lo deseas puede utilizar el repositorio oficial de Docker siguiente las instrucciones de su [página web](https://docs.docker.com/engine/install/ubuntu/). 
 
 
 1. Instalación de paquetes básicos para permitir la utilización de paquetes apt sobre HTTPS.
@@ -147,7 +147,7 @@ $ sudo apt-get install \
     software-properties-common
 ```
 
-2. Añadimos las claves GPG oficiales de docker
+2. Añadimos las claves GPG oficiales de Docker
 
 ```
 $ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
@@ -169,7 +169,7 @@ $ sudo apt-get update
 $ sudo apt-get install docker-ce docker-ce-cli containerd.io 
 ```
 
-5. Si todo ha ido bien tras la instalación podrás utilizar el comando para obtener la versión de docker. Estamos listos para poder empezar con el taller. 
+5. Si todo ha ido bien tras la instalación podrás utilizar el comando para obtener la versión de Docker. Estamos listos para poder empezar con el taller. 
 
 ```
 $ docker --version
@@ -187,19 +187,19 @@ En primer lugar es necesario descarga la versión disponibles para Mac en el sig
 
 1. Hacer doble click sobre el archivo Docker.dmg para comenzar con el proceso de instalación. 
 
-2. A continuación, tienes que mover el icono de docker al directorio de aplicaciones como se muestra en la siguiente figura.
+2. A continuación, tienes que mover el icono de Docker al directorio de aplicaciones como se muestra en la siguiente figura.
 
-<img src="../img/docker-mac-1.png" alt="Instalación de docker en Mac 1" width="800"/>
+<img src="../img/docker-mac-1.png" alt="Instalación de Docker en Mac 1" width="800"/>
 
-3. Hacer doble click en el icono de docker que está en tu directorio de aplicaciones para iniciar la ejecución, cómo se muestra en la siguiente figura. Para la ejecución de docker se te solicitará autorización mediante usuario y contraseña. Es necesario tener privilegios para la instalación de ciertos componentes. 
+3. Hacer doble click en el icono de Docker que está en tu directorio de aplicaciones para iniciar la ejecución, cómo se muestra en la siguiente figura. Para la ejecución de Docker se te solicitará autorización mediante usuario y contraseña. Es necesario tener privilegios para la instalación de ciertos componentes. 
 
-<img src="../img/docker-mac-2.png" alt="Instalación de docker en Mac 2" width="800"/>
+<img src="../img/docker-mac-2.png" alt="Instalación de Docker en Mac 2" width="800"/>
 
-4. Si la aplicación ha podido ejecutarse correctamente deberá aparecer el icono de docker en la barra superior derecha de tu escritorio. Este icono indica que Docker Desktop está ejecutandose y puedes utilizarlo en tu terminal. 
+4. Si la aplicación ha podido ejecutarse correctamente deberá aparecer el icono de Docker en la barra superior derecha de tu escritorio. Este icono indica que Docker Desktop está ejecutandose y puedes utilizarlo en tu terminal. 
 
-<img src="../img/docker-mac-3.png" alt="Instalación de docker en Mac 3" width="160"/>
+<img src="../img/docker-mac-3.png" alt="Instalación de Docker en Mac 3" width="160"/>
 
-5. Si todo ha ido bien tras la instalación podrás utilizar el comando para obtener la versión de docker como se indica a continuación. 
+5. Si todo ha ido bien tras la instalación podrás utilizar el comando para obtener la versión de Docker como se indica a continuación. 
 
 ```
 $ docker --version
